@@ -170,8 +170,10 @@ public class Photoshop extends Component {
         		int avgG = 0;
         		int avgB = 0;
         		
+        		if (j < pixels[i].length - 2 && i < pixels.length - 2) {
                 for (int k = 0; k < i+3; k++) {
                 	for (int l = 0; l < j+3; l++) {
+                		
                 		int R = Math.max(0,Math.min(c.getRed(),255));
                         int G = Math.max(0,Math.min(c.getGreen(),255));
                         int B = Math.max(0,Math.min(c.getBlue(),255));
@@ -180,6 +182,7 @@ public class Photoshop extends Component {
                 		avgB += B;
                 	}
                 }
+        		
                 avgR/=9;
                 r = avgR;
                 avgG/=9;
@@ -187,16 +190,10 @@ public class Photoshop extends Component {
                 avgB/=9;
                 b = avgB;
                 
-                pixels[i+1][j+1] = new Color(r,g,b);
                 
-                if (j == pixels[i].length - 2) {
-                	i++;
-                	j=0;
+                	pixels[i+1][j+1] = new Color(r,g,b);
                 }
-                if (i == pixels.length - 2) {
-                	j++;
-                	i=0;
-                }
+                
 //                for(int k = 0; k < i+2; k++) {
 //                	for(int l = 0; l < j+2; l++) {
 //                		if (i == 0 && j == pixels[i].length - 2) {
