@@ -55,19 +55,51 @@ public class Photoshop extends Component {
     public void flip(boolean horizontally) {
         outputName = (horizontally?"h":"v") + "_flipped_" + outputName;
         
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
-
-                Color c = pixels[i][j];
-
-                int r = -Math.max(0,Math.min(c.getRed(),255));
-                int g = -Math.max(0,Math.min(c.getGreen(),255));
-                int b = -Math.max(0,Math.min(c.getBlue(),255));
-
-                pixels[i][j] = new Color(r,g,b);
-
-            }
-
+        if (horizontally) {
+	        for (int i = 0; i < h/2; i++) {
+	            for (int j = 0; j < w; j++) {
+	
+	                Color c = pixels[i][j];
+	                Color d = pixels[pixels.length - 1 - i][j];
+	                int r = Math.max(0,Math.min(c.getRed(),255));
+	                int g = Math.max(0,Math.min(c.getGreen(),255));
+	                int b = Math.max(0,Math.min(c.getBlue(),255));
+	                
+	                int R = Math.max(0,Math.min(d.getRed(),255));
+	                int G = Math.max(0,Math.min(d.getGreen(),255));
+	                int B = Math.max(0,Math.min(d.getBlue(),255));
+	                
+	                int tempr;
+	                int tempg;
+	                int tempb;
+	                
+//	                tempr = R;
+//	                tempg = G;
+//	                tempb = B;
+//	                
+//	                R = r;
+//	                G = g;
+//	                B = b;
+//	                
+//	                r = tempr;
+//	                g = tempg;
+//	                b = tempb;
+	                
+	                
+	                
+	                
+	                
+	
+	                pixels[i][j] = new Color(R,G,B);
+	                pixels[pixels.length - 1 - i][j] = new Color(r, g, b);
+	    
+	
+	            }
+	
+	        }
+	    }
+        else {
+        	
         }
     }
     
