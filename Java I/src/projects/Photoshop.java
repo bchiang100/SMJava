@@ -169,6 +169,7 @@ public class Photoshop extends Component {
                 int avgR = 0;
         		int avgG = 0;
         		int avgB = 0;
+        		
                 for (int k = 0; k < i+3; k++) {
                 	for (int l = 0; l < j+3; l++) {
                 		int R = Math.max(0,Math.min(c.getRed(),255));
@@ -185,20 +186,38 @@ public class Photoshop extends Component {
                 g = avgG;
                 avgB/=9;
                 b = avgB;
+                
                 pixels[i+1][j+1] = new Color(r,g,b);
                 
-                for(int k = 0; k < i+2; k++) {
-                	for(int l = 0; l < j+2; l++) {
-                		if (i == 0 || )
-                	}
+                if (j == pixels[i].length - 2) {
+                	i++;
+                	j=0;
                 }
+                if (i == pixels.length - 2) {
+                	j++;
+                	i=0;
+                }
+//                for(int k = 0; k < i+2; k++) {
+//                	for(int l = 0; l < j+2; l++) {
+//                		if (i == 0 && j == pixels[i].length - 2) {
+//                			int R = Math.max(0,Math.min(c.getRed(),255));
+//                            int G = Math.max(0,Math.min(c.getGreen(),255));
+//                            int B = Math.max(0,Math.min(c.getBlue(),255));
+//                            
+//                    		avgR += R;
+//                    		avgG += G;
+//                    		avgB += B;
+//                    		
+//                    		pixels[i+1][j+1] = new Color(r,g,b);
+//                		}
+//                	}
+//                }
 			}
 		}
 		
 		//Edge Cases
-		for (int i = 0; i < )
-		// your code here
-	}
+    }
+	
     
     // this highlights the edges in the image, turning everything else black. 
     // to do this: at each pixel, sum the 8 surrounding pixels' rgb values. 
@@ -206,7 +225,31 @@ public class Photoshop extends Component {
     // this value is the rgb value for the 'edged' image
     public void edge() {
         outputName = "edged_" + outputName;
-
+        int pixelsTemp[][] = new int[w][h];
+        for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				Color c = pixels[i][j];
+				
+				int r;
+                int g;
+                int b;
+                
+                int totR = 0;
+        		int totG = 0;
+        		int totB = 0;
+        		
+                for (int k = 0; k < i+3; k++) {
+                	for (int l = 0; l < j+3; l++) {
+                		int R = Math.max(0,Math.min(c.getRed(),255));
+                        int G = Math.max(0,Math.min(c.getGreen(),255));
+                        int B = Math.max(0,Math.min(c.getBlue(),255));
+                		totR += R;
+                		totG += G;
+                		totB += B;
+                	}
+                }
+			}
+        }
         // your code here
     }
     

@@ -65,6 +65,7 @@ public class Wrestler {
 	}
 	
 	public static void main(String [] args) {
-		
+		Wrestler Bryan = new Wrestler("Bryan", 72, "Navy Blue", 0);
+		Bryan.fight(new Wrestler("Kevin", 70, "Red", 0));
 	}
 }
