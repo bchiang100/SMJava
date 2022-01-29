@@ -47,7 +47,6 @@ public class Photoshop extends Component {
                 pixels[i][j] = new Color(r,g,b);
 
             }
-
         }
     }
     
@@ -69,26 +68,6 @@ public class Photoshop extends Component {
 	                int G = Math.max(0,Math.min(d.getGreen(),255));
 	                int B = Math.max(0,Math.min(d.getBlue(),255));
 	                
-	                int tempr;
-	                int tempg;
-	                int tempb;
-	                
-//	                tempr = R;
-//	                tempg = G;
-//	                tempb = B;
-//	                
-//	                R = r;
-//	                G = g;
-//	                B = b;
-//	                
-//	                r = tempr;
-//	                g = tempg;
-//	                b = tempb;
-	                
-	                
-	                
-	                
-	                
 	
 	                pixels[i][j] = new Color(R,G,B);
 	                pixels[pixels.length - 1 - i][j] = new Color(r, g, b);
@@ -99,7 +78,27 @@ public class Photoshop extends Component {
 	        }
 	    }
         else {
-        	
+        	for (int i = 0; i < h; i++) {
+	            for (int j = 0; j < w/2; j++) {
+	
+	                Color c = pixels[i][j];
+	                Color d = pixels[i][pixels[i].length - 1 - j];
+	                int r = Math.max(0,Math.min(c.getRed(),255));
+	                int g = Math.max(0,Math.min(c.getGreen(),255));
+	                int b = Math.max(0,Math.min(c.getBlue(),255));
+	                
+	                int R = Math.max(0,Math.min(d.getRed(),255));
+	                int G = Math.max(0,Math.min(d.getGreen(),255));
+	                int B = Math.max(0,Math.min(d.getBlue(),255));
+	                
+	
+	                pixels[i][j] = new Color(R,G,B);
+	                pixels[i][pixels[i].length - 1 - j] = new Color(r, g, b);
+	    
+	
+	            }
+	
+	        }
         }
     }
     
@@ -114,15 +113,15 @@ public class Photoshop extends Component {
 
                 Color c = pixels[i][j];
 
-                int r = Math.max(0,Math.min(c.getRed(),255)) - 255;
+                int r = 255 - Math.max(0,Math.min(c.getRed(),255));
                 if (r < 0) {
                 	r = 0;
                 }
-                int g = Math.max(0,Math.min(c.getGreen(),255)) - 255;
+                int g = 255 - Math.max(0,Math.min(c.getGreen(),255));
                 if (g < 0) {
                 	g = 0;
                 }
-                int b = Math.max(0,Math.min(c.getBlue(),255)) - 255;
+                int b = 255 - Math.max(0,Math.min(c.getBlue(),255));
                 if (b < 0) {
                 	b = 0;
                 }
@@ -130,9 +129,7 @@ public class Photoshop extends Component {
                 pixels[i][j] = new Color(r,g,b);
 
             }
-
         }
-        // your code here
     }
     
     // this makes the image 'simpler' by redrawing it using only a few colors
@@ -190,61 +187,32 @@ public class Photoshop extends Component {
     // divide this sum by 9, and set it as the rgb value for the blurred image
     public void blur() {
 		outputName = "blurred_" + outputName;
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				Color c = pixels[i][j];
+		for (int i = 0; i < h-2; i++) {
+			for (int j = 0; j < w-2; j++) {
 				
-				int r;
-                int g;
-                int b;
-                
                 int avgR = 0;
         		int avgG = 0;
         		int avgB = 0;
         		
-        		if (j < pixels[i].length - 2 && i < pixels.length - 2) {
-                for (int k = 0; k < i+3; k++) {
-                	for (int l = 0; l < j+3; l++) {
-                		
-                		int R = Math.max(0,Math.min(c.getRed(),255));
-                        int G = Math.max(0,Math.min(c.getGreen(),255));
-                        int B = Math.max(0,Math.min(c.getBlue(),255));
-                		avgR += R;
-                		avgG += G;
-                		avgB += B;
+                for (int k = i; k < i+3; k++) {
+                	for (int l = j; l < j+3; l++) {
+                		Color c = pixels[k][l];
+                		int r = Math.max(0,Math.min(c.getRed(),255));
+                        int g = Math.max(0,Math.min(c.getGreen(),255));
+                        int b = Math.max(0,Math.min(c.getBlue(),255));
+                		avgR += r;
+                		avgG += g;
+                		avgB += b;	
                 	}
                 }
         		
                 avgR/=9;
-                r = avgR;
                 avgG/=9;
-                g = avgG;
                 avgB/=9;
-                b = avgB;
-                
-                
-                	pixels[i+1][j+1] = new Color(r,g,b);
-                }
-                
-//                for(int k = 0; k < i+2; k++) {
-//                	for(int l = 0; l < j+2; l++) {
-//                		if (i == 0 && j == pixels[i].length - 2) {
-//                			int R = Math.max(0,Math.min(c.getRed(),255));
-//                            int G = Math.max(0,Math.min(c.getGreen(),255));
-//                            int B = Math.max(0,Math.min(c.getBlue(),255));
-//                            
-//                    		avgR += R;
-//                    		avgG += G;
-//                    		avgB += B;
-//                    		
-//                    		pixels[i+1][j+1] = new Color(r,g,b);
-//                		}
-//                	}
-//                }
+
+                pixels[i+1][j+1] = new Color(avgR, avgG, avgB);
 			}
 		}
-		
-		//Edge Cases
     }
 	
     
@@ -254,32 +222,127 @@ public class Photoshop extends Component {
     // this value is the rgb value for the 'edged' image
     public void edge() {
         outputName = "edged_" + outputName;
-        int pixelsTemp[][] = new int[w][h];
-        for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				Color c = pixels[i][j];
+        Color pixelsTemp[][] = new Color[h][w];
+        
+        for (int i = 0; i < h-3; i++) {
+			for (int j = 0; j < w-3; j++) {
 				
-				int r;
-                int g;
-                int b;
-                
-                int totR = 0;
-        		int totG = 0;
-        		int totB = 0;
+                int sumR = 0;
+        		int sumG = 0;
+        		int sumB = 0;
         		
-                for (int k = 0; k < i+3; k++) {
-                	for (int l = 0; l < j+3; l++) {
-                		int R = Math.max(0,Math.min(c.getRed(),255));
-                        int G = Math.max(0,Math.min(c.getGreen(),255));
-                        int B = Math.max(0,Math.min(c.getBlue(),255));
-                		totR += R;
-                		totG += G;
-                		totB += B;
+        		int centerR = 0;
+        		int centerG = 0;
+        		int centerB = 0;
+        		
+                for (int k = i; k < i+3; k++) {
+                	for (int l = j; l < j+3; l++) {
+                		Color c = pixels[k][l];
+                		Color d = pixels[k+1][l+1];
+                		if (k == i + 1 && l == j + 1) {
+                			centerR = Math.max(0,Math.min(d.getRed(),255));
+                            centerG = Math.max(0,Math.min(d.getGreen(),255));
+                            centerB = Math.max(0,Math.min(d.getBlue(),255));
+
+                            
+                		} else {
+                		int r = Math.max(0,Math.min(c.getRed(),255));
+                        int g = Math.max(0,Math.min(c.getGreen(),255));
+                        int b = Math.max(0,Math.min(c.getBlue(),255));              
+                		sumR += r;
+                		sumG += g;
+                		sumB += b;
+                		}
                 	}
                 }
+        		
+        		centerR *= 8;
+        		centerG *= 8;
+        		centerB *= 8;
+        		
+        		centerR -= sumR;
+        		centerG -= sumG;
+        		centerB -= sumB;
+                
+                if (centerR < 0) {
+                	centerR = 0;
+                }
+                if (centerG < 0) {
+                	centerG = 0;
+                }
+                if (centerB < 0) {
+                	centerB = 0;
+                }
+                if (centerR > 255) {
+                	centerR = 255;
+                }
+                if (centerG > 255) {
+                	centerG = 255;
+                }
+                if (centerB > 255) {
+                	centerB = 255;
+                }
+                pixelsTemp[i+1][j+1] = new Color(centerR, centerG,  centerB);
 			}
+		}
+        for (int m = 0; m < h; m++) {
+        	for (int n = 0; n < w; n++) {
+        		if (pixelsTemp[m][n] == null) {
+        			pixels[m][n] = new Color(255, 255, 255);
+        			continue;
+        		}
+        		pixels[m][n] = pixelsTemp[m][n];
+        	}
         }
-        // your code here
+    }
+    
+    public void replace(boolean red) {
+    	outputName = (red?"r":"b") + "_replaced_" + outputName;
+    	if (red) {
+	    	for (int i = 0; i < h; i++) {
+	            for (int j = 0; j < w; j++) {
+	
+	                Color c = pixels[i][j];
+	
+	                int r = Math.max(0,Math.min(c.getRed(),255));
+	                int g = Math.max(0,Math.min(c.getGreen(),255));
+	                int b = Math.max(0,Math.min(c.getBlue(),255));
+	                
+	                if (r >= 150 && r <= 255 && g >= 0 && g <= 70 && b >= 0 && b <= 50) {
+	                	r = 0;
+	                	g = 0;
+	                	b = 255;
+	                }
+	
+	                pixels[i][j] = new Color(r,g,b);
+	
+	            }
+	
+	        }
+    	}
+    	else {
+    		for (int i = 0; i < h; i++) {
+	            for (int j = 0; j < w; j++) {
+	
+	                Color c = pixels[i][j];
+	
+	                int r = Math.max(0,Math.min(c.getRed(),255));
+	                int g = Math.max(0,Math.min(c.getGreen(),255));
+	                int b = Math.max(0,Math.min(c.getBlue(),255));
+	                
+	                
+	                if (r >= 0 && r <= 50 && g >= 0 && g <= 255 && b >= 150 && b <=255) {
+	                	r = 255;
+	                	g = 0;
+	                	b = 0;
+	                }
+	
+	                pixels[i][j] = new Color(r,g,b);
+	
+	            }
+	
+	        }
+    	}
     }
     
     
@@ -311,7 +374,7 @@ public class Photoshop extends Component {
 			
 			// runs the manipulations determined by the user
 			System.out.println("Enter the manipulations you would like to run on the image.\nYour "
-					+ "choices are: brighten, flip, negate, blur, edge, or simplify.\nEnter each "
+					+ "choices are: brighten, flip, negate, blur, edge, simplify, or replace.\nEnter each "
 					+ "manipulation you'd like to run, then type in 'done'.");
 			Scanner in = new Scanner(System.in);
 			String action = in.next().toLowerCase();
@@ -327,6 +390,11 @@ public class Photoshop extends Component {
 		    				System.out.println("enter \"h\" to flip horizontally, anything else to flip vertically.");
 		        			Method m = getClass().getDeclaredMethod(action, boolean.class);
 		        			m.invoke(this, in.next().equals("h"));
+		    			}
+		    			else if (action.equals("replace")) {
+		    				System.out.println("enter \"r\" to replace all red colors to blue, anything else to replace all blue colors to red.");
+		        			Method m = getClass().getDeclaredMethod(action, boolean.class);
+		        			m.invoke(this, in.next().equals("r"));
 		    			}
 		    			else {
 		        			Method m = getClass().getDeclaredMethod(action);
