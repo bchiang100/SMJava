@@ -70,8 +70,8 @@ public class Deck {
 		}
 		System.out.println(Arrays.toString(deck));
 		return deck;
-		
 	}
+
 	public String toString() {
 		return "The deck's contents is " + Arrays.toString(deck);
 	}
