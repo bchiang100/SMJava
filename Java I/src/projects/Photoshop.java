@@ -289,8 +289,8 @@ public class Photoshop extends Component {
         }
     }
     //My extra feature. It is similar to blur, but enables user input for the user to type in the desired number of pixels to blur
-    public void advancedblur() {
-    	outputName = "advancedblur" + outputName;
+    public void customblur() {
+    	outputName = "customblur" + outputName;
     	
     	// runs a nested for loop that loops through each pixel
     	System.out.println("Enter the pixel size of the column");
@@ -354,7 +354,7 @@ public class Photoshop extends Component {
 			
 			// runs the manipulations determined by the user
 			System.out.println("Enter the manipulations you would like to run on the image.\nYour "
-					+ "choices are: brighten, flip, negate, blur, edge, simplify, or advancedblur.\nEnter each "
+					+ "choices are: brighten, flip, negate, blur, edge, simplify, or customblur.\nEnter each "
 					+ "manipulation you'd like to run, then type in 'done'.");
 			Scanner in = new Scanner(System.in);
 			String action = in.next().toLowerCase();
