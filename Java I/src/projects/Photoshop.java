@@ -17,7 +17,7 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
-
+import java.util.Scanner;
 public class Photoshop extends Component {
 
 	// the name of the output file. will be determined by which methods are called
@@ -29,7 +29,7 @@ public class Photoshop extends Component {
     // the width and height of the image 
     private int w,h;
     
-
+    Scanner input = new Scanner(System.in);
     // this method increases each color's rgb value by a given amount.
     //this has a runtime of n^2
     public void brighten(int amount) {
@@ -56,7 +56,30 @@ public class Photoshop extends Component {
         outputName = (horizontally?"h":"v") + "_flipped_" + outputName;
         // runs a nested for loop to find each pixel value and then swap them with the opposite side
         if (horizontally) {
-	        for (int i = 0; i < h/2; i++) {
+	        for (int i = 0; i < h; i++) {
+	            for (int j = 0; j < w/2; j++) {
+	            	Color c = pixels[i][j];
+	                Color d = pixels[i][pixels[i].length - 1 - j];
+	                int r = Math.max(0,Math.min(c.getRed(),255));
+	                int g = Math.max(0,Math.min(c.getGreen(),255));
+	                int b = Math.max(0,Math.min(c.getBlue(),255));
+	                
+	                int R = Math.max(0,Math.min(d.getRed(),255));
+	                int G = Math.max(0,Math.min(d.getGreen(),255));
+	                int B = Math.max(0,Math.min(d.getBlue(),255));
+	                
+	
+	                pixels[i][j] = new Color(R,G,B);
+	                pixels[i][pixels[i].length - 1 - j] = new Color(r, g, b);
+	    
+	
+	            }
+	
+	        }
+	    }
+        // this runs if the user enters anything other than h, so it will flip vertically
+        else {
+        	for (int i = 0; i < h/2; i++) {
 	            for (int j = 0; j < w; j++) {
 	            	// color c is pointing at the current pixel
 	                Color c = pixels[i][j];
@@ -73,30 +96,7 @@ public class Photoshop extends Component {
 	
 	                pixels[i][j] = new Color(R,G,B);
 	                pixels[pixels.length - 1 - i][j] = new Color(r, g, b);
-	    
-	
-	            }
-	
-	        }
-	    }
-        // this runs if the user enters anything other than h, so it will flip vertically
-        else {
-        	for (int i = 0; i < h; i++) {
-	            for (int j = 0; j < w/2; j++) {
-	
-	                Color c = pixels[i][j];
-	                Color d = pixels[i][pixels[i].length - 1 - j];
-	                int r = Math.max(0,Math.min(c.getRed(),255));
-	                int g = Math.max(0,Math.min(c.getGreen(),255));
-	                int b = Math.max(0,Math.min(c.getBlue(),255));
 	                
-	                int R = Math.max(0,Math.min(d.getRed(),255));
-	                int G = Math.max(0,Math.min(d.getGreen(),255));
-	                int B = Math.max(0,Math.min(d.getBlue(),255));
-	                
-	
-	                pixels[i][j] = new Color(R,G,B);
-	                pixels[i][pixels[i].length - 1 - j] = new Color(r, g, b);
 	    
 	
 	            }
@@ -237,20 +237,15 @@ public class Photoshop extends Component {
                 for (int k = i; k < i+3; k++) {
                 	for (int l = j; l < j+3; l++) {
                 		Color c = pixels[k][l];
-                		Color d = pixels[k+1][l+1];
+                		
                 		if (k == i + 1 && l == j + 1) {
-                			centerR = Math.max(0,Math.min(d.getRed(),255));
-                            centerG = Math.max(0,Math.min(d.getGreen(),255));
-                            centerB = Math.max(0,Math.min(d.getBlue(),255));
-
-                            
+                			centerR = Math.max(0,Math.min(c.getRed(),255));
+                            centerG = Math.max(0,Math.min(c.getGreen(),255));
+                            centerB = Math.max(0,Math.min(c.getBlue(),255));
                 		} else {
-                		int r = Math.max(0,Math.min(c.getRed(),255));
-                        int g = Math.max(0,Math.min(c.getGreen(),255));
-                        int b = Math.max(0,Math.min(c.getBlue(),255));              
-                		sumR += r;
-                		sumG += g;
-                		sumB += b;
+                		sumR += Math.max(0,Math.min(c.getRed(),255));
+                        sumG += Math.max(0,Math.min(c.getGreen(),255));
+                        sumB += Math.max(0,Math.min(c.getBlue(),255));             
                 		}
                 	}
                 }
@@ -287,145 +282,47 @@ public class Photoshop extends Component {
         for (int m = 0; m < h; m++) {
         	for (int n = 0; n < w; n++) {
         		if (pixelsTemp[m][n] == null) {
-        			pixels[m][n] = new Color(255, 255, 255);
         			continue;
         		}
         		pixels[m][n] = pixelsTemp[m][n];
         	}
         }
     }
-    //My extra feature. It is similar to edge, but flips the RGB values from black to white for a more "angelic" feel. I also created borders around the image to make it look framed.
-    public void border_flip() {
-    	outputName = "borderFlip_" + outputName;
+    //My extra feature. It is similar to blur, but enables user input for the user to type in the desired number of pixels to blur
+    public void advancedblur() {
+    	outputName = "advancedblur" + outputName;
     	
-    		Color pixelsTemp[][] = new Color[h][w];
-            // runs a nested for loop that loops through each pixel
-            for (int i = 0; i < h-3; i++) {
-    			for (int j = 0; j < w-3; j++) {
-    				
-                    int sumR = 0;
-            		int sumG = 0;
-            		int sumB = 0;
-            		
-            		int centerR = 0;
-            		int centerG = 0;
-            		int centerB = 0;
-            		// runs another nested for loop (inside a nested for loop) that runs a 3x3 matrix array and multiplies the center pixel by 8 and subtracts from the total sum
-                    for (int k = i; k < i+3; k++) {
-                    	for (int l = j; l < j+3; l++) {
-                    		Color c = pixels[k][l];
-                    		Color d = pixels[k+1][l+1];
-                    		if (k == i + 1 && l == j + 1) {
-                    			centerR = Math.max(0,Math.min(d.getRed(),255));
-                                centerG = Math.max(0,Math.min(d.getGreen(),255));
-                                centerB = Math.max(0,Math.min(d.getBlue(),255));
+    	// runs a nested for loop that loops through each pixel
+    	System.out.println("Enter the pixel size of the column");
+		int column = input.nextInt();
+		System.out.println("Enter the pixel size of the row");
+		int row = input.nextInt();
+    			for (int i = 0; i < h-(column-1); i++) {
+    				for (int j = 0; j < w-(row-1); j++) {
+    					
+    	                int avgR = 0;
+    	        		int avgG = 0;
+    	        		int avgB = 0;
+    	        		// runs another nested for loop (inside a nested for loop) that runs a custom (user input) matrix array to sum up all the surrounding pixel numbers
+    	                for (int k = i; k < i+column; k++) {
+    	                	for (int l = j; l < j+row; l++) {
+    	                		Color c = pixels[k][l];
+    	                		int r = Math.max(0,Math.min(c.getRed(),255));
+    	                        int g = Math.max(0,Math.min(c.getGreen(),255));
+    	                        int b = Math.max(0,Math.min(c.getBlue(),255));
+    	                		avgR += r;
+    	                		avgG += g;
+    	                		avgB += b;	
+    	                	}
+    	                }
+    	        		// divides the sum of the RGB values by pixels1 * pixels2 to find the average
+    	                avgR/=column * row;
+    	                avgG/=column * row;
+    	                avgB/=column * row;
 
-                                
-                    		} else {
-                    		int r = Math.max(0,Math.min(c.getRed(),255));
-                            int g = Math.max(0,Math.min(c.getGreen(),255));
-                            int b = Math.max(0,Math.min(c.getBlue(),255));              
-                    		sumR += r;
-                    		sumG += g;
-                    		sumB += b;
-                    		}
-                    	}
-                    }
-            		
-            		centerR *= 8;
-            		centerG *= 8;
-            		centerB *= 8;
-            		
-            		centerR -= sumR;
-            		centerG -= sumG;
-            		centerB -= sumB;
-                    // this time, if the RGB values dip below 0, it will set it to 255 (white). This essentially flips the color from black to white.
-                    if (centerR < 0) {
-                    	centerR = 255;
-                    }
-                    if (centerG < 0) {
-                    	centerG = 255;
-                    }
-                    if (centerB < 0) {
-                    	centerB = 255;
-                    }
-                    if (centerR > 255) {
-                    	centerR = 0;
-                    }
-                    if (centerG > 255) {
-                    	centerG = 0;
-                    }
-                    if (centerB > 255) {
-                    	centerB = 0;
-                    }
-                    pixelsTemp[i+1][j+1] = new Color(centerR, centerG,  centerB);
+    	                pixels[i+((column-1)/2)][j+((row-1)/2)] = new Color(avgR, avgG, avgB);
+    				}
     			}
-    		}
-            for (int m = 0; m < h; m++) {
-            	for (int n = 0; n < w; n++) {
-            		if (pixelsTemp[m][n] == null) {
-            			pixels[m][n] = new Color(255, 255, 255);
-            			continue;
-            		}
-            		pixels[m][n] = pixelsTemp[m][n];
-            	}
-            }
-            // runs a for loop to create a border around all 4 sides of the image to make it look framed
-            for (int i = 0; i < h; i++) {
-            	pixels[i][0] = new Color(0, 0, 0);
-            	pixels[i][1] = new Color(0, 0, 0);
-            	pixels[i][2] = new Color(0, 0, 0);
-            	pixels[i][3] = new Color(0, 0, 0);
-            	pixels[i][4] = new Color(0, 0, 0);
-            	pixels[i][5] = new Color(0, 0, 0);
-            	pixels[i][6] = new Color(0, 0, 0);
-            	pixels[i][7] = new Color(0, 0, 0);
-            	pixels[i][8] = new Color(0, 0, 0);
-            	pixels[i][9] = new Color(0, 0, 0);
-            	pixels[i][10] = new Color(0, 0, 0);
-            	pixels[i][11] = new Color(0, 0, 0);
-            	pixels[i][12] = new Color(0, 0, 0);
-            	pixels[i][w-1] = new Color(0, 0, 0);
-            	pixels[i][w-2] = new Color(0, 0, 0);
-            	pixels[i][w-3] = new Color(0, 0, 0);
-            	pixels[i][w-4] = new Color(0, 0, 0);
-            	pixels[i][w-5] = new Color(0, 0, 0);
-            	pixels[i][w-6] = new Color(0, 0, 0);
-            	pixels[i][w-7] = new Color(0, 0, 0);
-            	pixels[i][w-8] = new Color(0, 0, 0);
-            	pixels[i][w-9] = new Color(0, 0, 0);
-            	pixels[i][w-10] = new Color(0, 0, 0);
-            	pixels[i][w-11] = new Color(0, 0, 0);
-            	pixels[i][w-12] = new Color(0, 0, 0);
-            }
-            for (int j = 0; j < w; j++) {
-        		pixels[0][j] = new Color(0,0,0);
-        		pixels[1][j] = new Color(0,0,0);
-        		pixels[2][j] = new Color(0,0,0);
-        		pixels[3][j] = new Color(0,0,0);
-        		pixels[4][j] = new Color(0,0,0);
-        		pixels[5][j] = new Color(0,0,0);
-        		pixels[6][j] = new Color(0,0,0);
-        		pixels[7][j] = new Color(0,0,0);
-        		pixels[8][j] = new Color(0,0,0);
-        		pixels[9][j] = new Color(0,0,0);
-        		pixels[10][j] = new Color(0,0,0);
-        		pixels[11][j] = new Color(0,0,0);
-        		pixels[12][j] = new Color(0,0,0);
-        		pixels[h-1][j] = new Color(0,0,0);
-        		pixels[h-2][j] = new Color(0,0,0);
-        		pixels[h-3][j] = new Color(0,0,0);
-        		pixels[h-4][j] = new Color(0,0,0);
-        		pixels[h-5][j] = new Color(0,0,0);
-        		pixels[h-6][j] = new Color(0,0,0);
-        		pixels[h-7][j] = new Color(0,0,0);
-        		pixels[h-8][j] = new Color(0,0,0);
-        		pixels[h-9][j] = new Color(0,0,0);
-        		pixels[h-10][j] = new Color(0,0,0);
-        		pixels[h-11][j] = new Color(0,0,0);
-        		pixels[h-12][j] = new Color(0,0,0);
- 
-    	}
     }
     
     
@@ -457,7 +354,7 @@ public class Photoshop extends Component {
 			
 			// runs the manipulations determined by the user
 			System.out.println("Enter the manipulations you would like to run on the image.\nYour "
-					+ "choices are: brighten, flip, negate, blur, edge, simplify, or border_flip.\nEnter each "
+					+ "choices are: brighten, flip, negate, blur, edge, simplify, or advancedblur.\nEnter each "
 					+ "manipulation you'd like to run, then type in 'done'.");
 			Scanner in = new Scanner(System.in);
 			String action = in.next().toLowerCase();
