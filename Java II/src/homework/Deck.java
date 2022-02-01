@@ -75,15 +75,4 @@ public class Deck {
 	public String toString() {
 		return "The deck's contents is " + Arrays.toString(deck);
 	}
-	public static void main(String [] args) {
-		Deck d = new Deck();
-		d.shuffle();
-		d.shuffle();
-		d.shuffle();
-		d.shuffle();
-		d.shuffle();
-		d.sort();
-		d.getFirstN(8);
-		d.getRandom();
-	}
 }
