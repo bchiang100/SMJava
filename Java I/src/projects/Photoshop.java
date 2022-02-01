@@ -43,7 +43,25 @@ public class Photoshop extends Component {
                 int r = Math.max(0,Math.min(c.getRed()+amount,255));
                 int g = Math.max(0,Math.min(c.getGreen()+amount,255));
                 int b = Math.max(0,Math.min(c.getBlue()+amount,255));
-
+                
+                if (r > 255) {
+                	r = 255;
+                }
+                if (g > 255) {
+                	g = 255;
+                }
+                if (b > 255) {
+                	b = 255;
+                }
+                if (r < 0) {
+                	r = 0;
+                }
+                if (g < 0) {
+                	g = 0;
+                }
+                if (b < 0) {
+                	b = 0;
+                }
                 pixels[i][j] = new Color(r,g,b);
 
             }
