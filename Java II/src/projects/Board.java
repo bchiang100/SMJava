@@ -44,6 +44,14 @@ public class Board {
 		board[7][5] = new Pawn(0, images.get("WhitePawn"));
 		board[7][6] = new Pawn(0, images.get("WhitePawn"));
 		board[7][7] = new Pawn(0, images.get("WhitePawn"));
+		board[0][0] = new Pawn(0, images.get("BlackPawn"));
+		board[0][1] = new Pawn(0, images.get("BlackPawn"));
+		board[0][2] = new Pawn(0, images.get("BlackPawn"));
+		board[0][3] = new Pawn(0, images.get("BlackPawn"));
+		board[0][4] = new Pawn(0, images.get("BlackPawn"));
+		board[0][5] = new Pawn(0, images.get("BlackPawn"));
+		board[0][6] = new Pawn(0, images.get("BlackPawn"));
+		board[0][7] = new Pawn(0, images.get("BlackPawn"));
 		kingPositions[0] = new int[]{3, 0};
 		kingPositions[1] = new int[] {3, 7};
 		
@@ -56,7 +64,15 @@ public class Board {
 	public void draw(Graphics g, Piece curr) {
 		
 		int sw = Chess.SQUARE_WIDTH;	// the width of each square on the board
-		
+		int xLoc = 0;
+		int yLoc = 0;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				g.drawRect(xLoc, yLoc, sw, sw);
+				xLoc+=sw;
+			}
+			yLoc+=sw;
+		}
 		// your code here
 		
 	}
@@ -65,7 +81,18 @@ public class Board {
 	// in the vacated space with an empty square.
 	// returns 0 for a normal move, 1 for a check move, 2 for a checkmate move
 	public int move(int r, int c, int newR, int newC) {
-		
+		int team;
+		int newKingArr[] = {newR, newC};
+		if (board[r][c].isKing()) {
+			team = board[r][c].getTeam();
+			kingPositions[team] = newKingArr;
+		}
+		if (check() == true) {
+			return 1;
+		}
+		if (check() == false) {
+			return 0;
+		}
 		// your code here
 		
 	}
