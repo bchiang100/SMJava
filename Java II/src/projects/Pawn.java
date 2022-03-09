@@ -61,14 +61,18 @@ public class Pawn extends Piece{
 	@Override
 	public boolean check(int kingr, int kingc, int r, int c, Board board) {
 		if (getTeam() == 0) {
-			if (kingr - r == 1)
-				if (Math.abs(kingc - c) == 1)
+			if (kingc - c == 1) { 
+				System.out.println(kingr + " " + kingc + " " + r + " " + c);
+
+				if (Math.abs(kingr - r) == 1)
 					return true;
+			}
 		}
 		if (getTeam() == 1) {
-			if (kingc - r == -1)
-				if (Math.abs(kingc - c) == 1)
+			if (kingc - c == -1) {
+				if (Math.abs(kingr - r) == 1)
 					return true;
+			}
 		}
 		return false;
 	}

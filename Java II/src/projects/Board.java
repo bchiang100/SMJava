@@ -12,14 +12,18 @@ public class Board {
 	// second row is the black king.
 	private int[][] kingPositions = new int[2][2];
 	// represents the entire board - make sure to initialize!.
-	private Piece[][] board = new Piece [8][8];
+	private Piece[][] board = new Piece[8][8];
 	
 	public Board() {
 		
 		// loads the images into a map
 		HashMap<String, Image> images = loadImages();
 		
-		
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				board[i][j] = new Empty();
+			}
+		}
 		board[7][3] = new King(0, images.get("WhiteKing"));
 		board[0][3] = new King(1, images.get("BlackKing"));
 		board[7][4] = new Queen(0, images.get("WhiteQueen"));
@@ -28,34 +32,22 @@ public class Board {
 		board[7][5] = new Bishop(0, images.get("WhiteBishop"));
 		board[0][2] = new Bishop(1, images.get("BlackBishop"));
 		board[0][5] = new Bishop(1, images.get("BlackBishop"));
-		board[7][1] = new Horse(0, images.get("WhiteHorse"));
-		board[7][6] = new Horse(0, images.get("WhiteHorse"));
-		board[0][1] = new Horse(1, images.get("BlackHorse"));
-		board[0][6] = new Horse(1, images.get("BlackHorse"));
+		board[7][1] = new Knight(0, images.get("WhiteKnight"));
+		board[7][6] = new Knight(0, images.get("WhiteKnight"));
+		board[0][1] = new Knight(1, images.get("BlackKnight"));
+		board[0][6] = new Knight(1, images.get("BlackKnight"));
 		board[7][0] = new Rook(0, images.get("WhiteRook"));
 		board[7][7] = new Rook(0, images.get("WhiteRook"));
 		board[0][0] = new Rook(1, images.get("BlackRook"));
 		board[0][7] = new Rook(1, images.get("BlackRook"));
-		board[7][0] = new Pawn(0, images.get("WhitePawn"));
-		board[7][1] = new Pawn(0, images.get("WhitePawn"));
-		board[7][2] = new Pawn(0, images.get("WhitePawn"));
-		board[7][3] = new Pawn(0, images.get("WhitePawn"));
-		board[7][4] = new Pawn(0, images.get("WhitePawn"));
-		board[7][5] = new Pawn(0, images.get("WhitePawn"));
-		board[7][6] = new Pawn(0, images.get("WhitePawn"));
-		board[7][7] = new Pawn(0, images.get("WhitePawn"));
-		board[0][0] = new Pawn(0, images.get("BlackPawn"));
-		board[0][1] = new Pawn(0, images.get("BlackPawn"));
-		board[0][2] = new Pawn(0, images.get("BlackPawn"));
-		board[0][3] = new Pawn(0, images.get("BlackPawn"));
-		board[0][4] = new Pawn(0, images.get("BlackPawn"));
-		board[0][5] = new Pawn(0, images.get("BlackPawn"));
-		board[0][6] = new Pawn(0, images.get("BlackPawn"));
-		board[0][7] = new Pawn(0, images.get("BlackPawn"));
+		for (int i = 0; i <= 7; i++) {
+			board[6][i] = new Pawn(0, images.get("WhitePawn"));
+		}
+		for (int i = 0; i <= 7; i++) {
+			board[1][i] = new Pawn(1, images.get("BlackPawn"));
+		}
 		kingPositions[0] = new int[]{3, 0};
 		kingPositions[1] = new int[] {3, 7};
-		
-		// fill in the rest of the chess board here
 		
 	}
 	
@@ -68,13 +60,24 @@ public class Board {
 		int yLoc = 0;
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				g.drawRect(xLoc, yLoc, sw, sw);
+				if (board[i][j] == curr) {
+					g.setColor(Color.yellow);
+				}
+				else if ((i+j) % 2 == 0) {
+					g.setColor(Color.white);
+				}
+				else {
+					g.setColor(Color.black);
+				}
+				g.fillRect(xLoc, yLoc, sw, sw);
+				
+				board[i][j].draw(g, xLoc, yLoc);
 				xLoc+=sw;
+				
 			}
+			xLoc = 0;
 			yLoc+=sw;
 		}
-		// your code here
-		
 	}
 	
 	// moves the piece currently at (r, c) to (newR, newC), filling 
@@ -83,24 +86,36 @@ public class Board {
 	public int move(int r, int c, int newR, int newC) {
 		int team;
 		int newKingArr[] = {newR, newC};
+		board[newR][newC] = board[r][c];
 		if (board[r][c].isKing()) {
 			team = board[r][c].getTeam();
 			kingPositions[team] = newKingArr;
 		}
+		board[r][c] = new Empty();
 		if (check() == true) {
 			return 1;
 		}
-		if (check() == false) {
-			return 0;
-		}
-		// your code here
-		
+		return 0;
 	}
 	
-	// determines if the non-current team is in check. 
+	// determines whether either team is in check. 
 	public boolean check() {
-		
-		// your code here
+		int opponent;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				// if the current square that you are iterating through isn't empty
+				if(board[i][j].getTeam() != -1) {
+					// this will always get the opponent team (opposite the current team piece) since you are getting the remainder of each team after adding by one and dividing by 2 which can be either 0 or 1 (representing the teams)
+					opponent = (board[i][j].getTeam()+1)%2;
+					// uses the unique game piece's check method (overrides Piece class) to check if the king is in check
+					if (board[i][j].check(kingPositions[opponent][0], kingPositions[opponent][1], i, j, this)) {
+						System.out.println("Player " + opponent + " is in check... What will you do?");
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 	
