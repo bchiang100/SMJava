@@ -9,75 +9,106 @@ public class Queen extends Piece{
 	}
 	@Override
 	public ArrayList<int[]> getMoves(Board board, int r, int c) {
+		// moves right
 		ArrayList<int[]> moves = new ArrayList<int[]>();
-		int[][] arr = new int[][] {{1,0}, {1,1}, {0,1},{1,-1},{-1,0},{-1,-1},{0,-1},{-1,1}};
-		for (int k = 0; k < arr.length; k++) {
-			for (int i = r, j = c; i >= 0 && j >= 0 && i<8 && j<8; i+=arr[k][0], j+=arr[k][1]) {
-				if (board.getBoard()[i][j].getTeam() == -1 || board.getBoard()[i][j].getTeam() == (getTeam()+1)%2) {
-					int[]move = {i,j};
+		for (int i = 1; i < 8; i++) {
+			if (r + i >= 0 && r + i < 8) {
+				if (board.getBoard()[r+i][c].getTeam() != getTeam()) {
+					int[]move = {r+i,c};
 					moves.add(move);
-				} else {
+				}
+				if (board.getBoard()[r+i][c].getTeam() != -1) {
+					break;
+				}
+			}
+			
+		}
+		// moves up
+		for (int i = 1; i < 8; i++) {
+			if (c + i >= 0 && c + i < 8) {
+				if (board.getBoard()[r][c+i].getTeam() != getTeam()) {
+					int[]move = {r,c + i};
+					moves.add(move);
+				}
+				if (board.getBoard()[r][c+i].getTeam() != -1) {
 					break;
 				}
 			}
 		}
-
-//		for (int i = c; i < 8; i++) {
-//			if (board.getBoard()[r][c+i].getTeam() != getTeam()) {
-//				int[]move = {r, c+1};
-//				moves.add(move);
-//			}
-//		}
-//		for (int i = c; i > 0; i--) {
-//			if (board.getBoard()[r][c-i].getTeam() != getTeam()) {
-//				int[]move = {r, c-1};
-//				moves.add(move);
-//			}
-//		}
-//		for (int i = r; i < 8; i++) {
-//			if (board.getBoard()[r+i][c].getTeam() != getTeam()) {
-//				int[]move = {r+1,c};
-//				moves.add(move);
-//			}
-//		}
-//		for (int i = r; i > 0; i--) {
-//			if (board.getBoard()[r-i][c].getTeam() != getTeam()) {
-//				int[]move = {r-1,c};
-//				moves.add(move);
-//			}
-//		}
-//		for (int i = r; i < 8; i++) {
-//			for (int j = c; j < 8; j++) {
-//				if (board.getBoard()[r+i][c+j].getTeam() != getTeam()) {
-//					int[]move = {r+1,c+1};
-//					moves.add(move);
-//				}
-//			}
-//		}
-//		for (int i = r; i < 8; i++) {
-//			for (int j = c; j > 0; j--) {
-//				if (board.getBoard()[r+i][c-j].getTeam() != getTeam()) {
-//					int[]move = {r+1,c-1};
-//					moves.add(move);
-//				}
-//			}
-//		}
-//		for (int i = r; i > 0; i--) {
-//			for (int j = c; j > 0; j--) {
-//				if (board.getBoard()[r-i][c-j].getTeam() != getTeam()) {
-//					int[]move = {r-1,c-1};
-//					moves.add(move);
-//				}
-//			}
-//		}
-//		for (int i = r; i > 0; i--) {
-//			for (int j = c; j < 8; j++) {
-//				if (board.getBoard()[r-i][c+j].getTeam() != getTeam()) {
-//					int[]move = {r-1,c+1};
-//					moves.add(move);
-//				}
-//			}
-//		}
+		// moves left
+		for (int i = 1; i < 8; i++) {
+			if (r - i >= 0 && r - i < 8) {
+				if (board.getBoard()[r-i][c].getTeam() != getTeam()) {
+					int[]move = {r-i,c};
+					moves.add(move);
+				}
+				if (board.getBoard()[r-i][c].getTeam() != -1) {
+					break;
+				}
+			}
+		}
+		// moves down
+		for (int i = 1; i < 8; i++) {
+			if (c - i >= 0 && c - i < 8) {
+				if (board.getBoard()[r][c-i].getTeam() != getTeam()) {
+					int[]move = {r,c-i};
+					moves.add(move);
+				}
+				if (board.getBoard()[r][c-i].getTeam() != -1) {
+					break;
+				}
+			}
+		}
+		// moves up and right
+		for (int i = 1; i < 8; i++) {
+			if (r + i >= 0 && r + i < 8 && c + i >=0 && c+i <8) {
+				if (board.getBoard()[r+i][c+i].getTeam() != getTeam()) {
+					int[]move = {r+i,c+i};
+					moves.add(move);
+				}
+				if (board.getBoard()[r+i][c+i].getTeam() != -1) {
+					break;
+				}
+			}
+			
+		}
+		// moves up and left
+		for (int i = 1; i < 8; i++) {
+			if (c + i >= 0 && c + i < 8  && r - i >=0 && r - i <8) {
+				if (board.getBoard()[r-i][c+i].getTeam() != getTeam()) {
+					int[]move = {r-i,c + i};
+					moves.add(move);
+				}
+				if (board.getBoard()[r-i][c+i].getTeam() != -1) {
+					break;
+				}
+			}
+		}
+		// moves down and right
+		for (int i = 1; i < 8; i++) {
+			if (r + i >= 0 && r + i < 8  && c - i >=0 && c-i <8) {
+				if (board.getBoard()[r+i][c-i].getTeam() != getTeam()) {
+					int[]move = {r+i,c-i};
+					moves.add(move);
+				}
+				if (board.getBoard()[r+i][c-i].getTeam() != -1) {
+					break;
+				}
+			}
+		}
+		// moves down and left
+		for (int i = 1; i < 8; i++) {
+			if (c - i >= 0 && c - i < 8  && r - i >=0 && r - i <8) {
+				if (board.getBoard()[r-i][c-i].getTeam() != getTeam()) {
+					int[]move = {r-i,c-i};
+					moves.add(move);
+				}
+				if (board.getBoard()[r-i][c-i].getTeam() != -1) {
+					break;
+				}
+			}
+			
+		}
 		return moves;
 	}
 	@Override
@@ -87,7 +118,13 @@ public class Queen extends Piece{
 	}
 	@Override
 	public boolean check(int kingr, int kingc, int r, int c, Board board) {
-		// TODO Auto-generated method stub
+		ArrayList<int[]> moves = new ArrayList<int[]>();
+		moves = getMoves(board,r,c);
+		for (int[] cord : moves) {
+			if (cord[0] == kingr && cord[1] == kingc) {
+				return true;
+			}
+		}
 		return false;
 	}
 }

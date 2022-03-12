@@ -47,14 +47,12 @@ public class Pawn extends Piece{
 				moves.add(move);
 			}
 		
-		
 		return moves;
 	}
 
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

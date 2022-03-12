@@ -69,7 +69,7 @@ public class Chess {
 					}
 					
 					else if (last_clicked != null)		{	
-
+						
 						if (is_in(e.getY()/SQUARE_WIDTH, e.getX()/SQUARE_WIDTH, last_clicked.getMoves(board, lasty, lastx))) {
 								
 							int result = board.move(lasty, lastx, e.getY()/SQUARE_WIDTH, e.getX()/SQUARE_WIDTH);

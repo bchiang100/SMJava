@@ -24,28 +24,32 @@ public class Board {
 				board[i][j] = new Empty();
 			}
 		}
-		board[7][3] = new King(0, images.get("WhiteKing"));
-		board[0][3] = new King(1, images.get("BlackKing"));
-		board[7][4] = new Queen(0, images.get("WhiteQueen"));
-		board[0][4] = new Queen(1, images.get("BlackQueen"));
-		board[7][2] = new Bishop(0, images.get("WhiteBishop"));
-		board[7][5] = new Bishop(0, images.get("WhiteBishop"));
-		board[0][2] = new Bishop(1, images.get("BlackBishop"));
-		board[0][5] = new Bishop(1, images.get("BlackBishop"));
-		board[7][1] = new Knight(0, images.get("WhiteKnight"));
-		board[7][6] = new Knight(0, images.get("WhiteKnight"));
-		board[0][1] = new Knight(1, images.get("BlackKnight"));
-		board[0][6] = new Knight(1, images.get("BlackKnight"));
-		board[7][0] = new Rook(0, images.get("WhiteRook"));
-		board[7][7] = new Rook(0, images.get("WhiteRook"));
-		board[0][0] = new Rook(1, images.get("BlackRook"));
+		// setting up the chess pieces
+		board[3][7] = new King(1, images.get("BlackKing"));
+		board[3][0] = new King(0, images.get("WhiteKing"));
+		board[4][7] = new Queen(1, images.get("BlackQueen"));
+		board[4][0] = new Queen(0, images.get("WhiteQueen"));
+		board[2][7] = new Bishop(1, images.get("BlackBishop"));
+		board[5][7] = new Bishop(1, images.get("BlackBishop"));
+		board[2][0] = new Bishop(0, images.get("WhiteBishop"));
+		board[5][0] = new Bishop(0, images.get("WhiteBishop"));
+		board[1][7] = new Knight(1, images.get("BlackKnight"));
+		board[6][7] = new Knight(1, images.get("BlackKnight"));
+		board[1][0] = new Knight(0, images.get("WhiteKnight"));
+		board[6][0] = new Knight(0, images.get("WhiteKnight"));
 		board[0][7] = new Rook(1, images.get("BlackRook"));
+		board[7][7] = new Rook(1, images.get("BlackRook"));
+		board[0][0] = new Rook(0, images.get("WhiteRook"));
+		board[7][0] = new Rook(0, images.get("WhiteRook"));
+		// for loop to create all the black pawns
 		for (int i = 0; i <= 7; i++) {
-			board[6][i] = new Pawn(0, images.get("WhitePawn"));
+			board[i][6] = new Pawn(1, images.get("BlackPawn"));
 		}
+		// for loop to create all the white pawns
 		for (int i = 0; i <= 7; i++) {
-			board[1][i] = new Pawn(1, images.get("BlackPawn"));
+			board[i][1] = new Pawn(0, images.get("WhitePawn"));
 		}
+		
 		kingPositions[0] = new int[]{3, 0};
 		kingPositions[1] = new int[] {3, 7};
 		
@@ -60,9 +64,11 @@ public class Board {
 		int yLoc = 0;
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
+				// if the current piece is clicked then choose a yellow background
 				if (board[i][j] == curr) {
 					g.setColor(Color.yellow);
 				}
+				// setting up the chess board (black/white)
 				else if ((i+j) % 2 == 0) {
 					g.setColor(Color.white);
 				}
@@ -84,17 +90,24 @@ public class Board {
 	// in the vacated space with an empty square.
 	// returns 0 for a normal move, 1 for a check move, 2 for a checkmate move
 	public int move(int r, int c, int newR, int newC) {
-		int team;
-		int newKingArr[] = {newR, newC};
-		board[newR][newC] = board[r][c];
+		// moves the king to a new position
 		if (board[r][c].isKing()) {
-			team = board[r][c].getTeam();
-			kingPositions[team] = newKingArr;
+			int team = board[r][c].getTeam();
+			kingPositions[team] = new int[] {newR, newC};
 		}
+		// checks for checkmate
+		if (board[newR][newC].isKing()) {
+			System.out.println("checkmate");
+			board[newR][newC] = board[r][c];
+			board[r][c] = new Empty();
+			return 2;
+		}
+		
+		board[newR][newC] = board[r][c];
 		board[r][c] = new Empty();
-		if (check() == true) {
-			return 1;
-		}
+		
+		
+		if (check()) return 1;
 		return 0;
 	}
 	

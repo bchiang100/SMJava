@@ -12,61 +12,37 @@ public class Knight extends Piece{
 	@Override
 	public ArrayList<int[]> getMoves(Board board, int r, int c) {
 		ArrayList<int[]> moves = new ArrayList<int[]>();
+		// creates a move set in the array arr for all the possible 8 moves
 		int[][] arr = new int[][] {{2,1}, {1,2}, {-1,2},{-2,1},{-2,-1},{-1,-2},{1,-2},{2,-1}};
-		for (int k = 0; k < arr.length; k++) {
-			for (int i = r, j = c; i >= 0 && j >= 0 && i<8 && j<8; i+=arr[k][0], j+=arr[k][1]) {
-				if (board.getBoard()[i][j].getTeam() == -1 || board.getBoard()[i][j].getTeam() == (getTeam()+1)%2) {
-					int[]move = {i,j};
-					moves.add(move);
-				} else {
-					break;
-				}
+		// goes through each move to see if it is possible. If it is then add it to the moves array list
+		for (int i = 0; i < 8; i++) {
+			if (r + arr[i][0] < 0 || r + arr[i][0] >= 8 || c + arr[i][1] < 0 || c + arr[i][1] >= 8) {
+				continue;
+			}
+			if (board.getBoard()[r+arr[i][0]][c+arr[i][1]].getTeam() != getTeam()) {
+				int move[] = {r+arr[i][0], c+arr[i][1]};
+				moves.add(move);
 			}
 		}
-//		if (board.getBoard()[r+2][c+1].getTeam() != getTeam()) {
-//			int[]move = {r+2, c+1};
-//			moves.add(move);
-//		}
-//		if (board.getBoard()[r+2][c-1].getTeam() != getTeam()) {
-//			int[]move = {r+2, c-1};
-//			moves.add(move);
-//		}
-//		if (board.getBoard()[r-2][c+1].getTeam() != getTeam()) {
-//			int[]move = {r-2, c+1};
-//			moves.add(move);
-//		}
-//		if (board.getBoard()[r-2][c-1].getTeam() != getTeam()) {
-//			int[]move = {r-2, c-1};
-//			moves.add(move);
-//		}
-//		if (board.getBoard()[r+1][c+2].getTeam() != getTeam()) {
-//			int[]move = {r+2, c+1};
-//			moves.add(move);
-//		}
-//		if (board.getBoard()[r+1][c-2].getTeam() != getTeam()) {
-//			int[]move = {r+2, c-1};
-//			moves.add(move);
-//		}
-//		if (board.getBoard()[r-1][c+2].getTeam() != getTeam()) {
-//			int[]move = {r-2, c+1};
-//			moves.add(move);
-//		}
-//		if (board.getBoard()[r-1][c-2].getTeam() != getTeam()) {
-//			int[]move = {r-2, c-1};
-//			moves.add(move);
-//		}
+
 		return moves;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean check(int kingr, int kingc, int r, int c, Board board) {
-		// TODO Auto-generated method stub
+		ArrayList<int[]> moves = getMoves(board, r, c);
+		for (int[] m : moves) {
+				
+				if (m[0] == kingr && m[1] == kingc) {
+					return true;
+				}
+				
+			}
 		return false;
 	}
 	

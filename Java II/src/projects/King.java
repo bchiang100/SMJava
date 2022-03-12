@@ -6,7 +6,6 @@ import java.util.ArrayList;
 public class King extends Piece{
 	public King(int turn, Image img) {
 		super(turn, img);
-		// TODO Auto-generated constructor stub
 	}
 
 	{
@@ -15,19 +14,34 @@ public class King extends Piece{
 
 	@Override
 	public ArrayList<int[]> getMoves(Board board, int r, int c) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<int[]> moves = new ArrayList<int[]>();
+		// creates a move set in the array arr for all the possible 8 moves
+		int[][] arr = new int[][] {{1,0}, {1,1}, {0,1},{1,-1},{-1,0},{-1,-1},{-1,0},{-1,1}};
+		// goes through each move to see if it is possible. If it is then add it to the moves array list
+		for (int i = 0; i < 8; i++) {
+			if (r + arr[i][0] < 0 || r + arr[i][0] >= 8 || c + arr[i][1] < 0 || c + arr[i][1] >= 8) {
+				continue;
+			}
+			if (board.getBoard()[r+arr[i][0]][c+arr[i][1]].getTeam() != getTeam()) {
+				int move[] = {r+arr[i][0], c+arr[i][1]};
+				moves.add(move);
+			}
+		}
+
+		return moves;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	public boolean isKing() {
+		return true;
+	}
+	
 	@Override
 	public boolean check(int kingr, int kingc, int r, int c, Board board) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

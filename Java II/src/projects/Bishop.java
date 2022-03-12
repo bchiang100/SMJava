@@ -12,70 +12,74 @@ public class Bishop extends Piece{
 	@Override
 	public ArrayList<int[]> getMoves(Board board, int r, int c) {
 		ArrayList<int[]> moves = new ArrayList<int[]>();
-		int[][] arr = new int[][] {{1,1}, {1,-1}, {-1,1},{-1,-1}};
-		for (int k = 0; k < arr.length; k++) {
-			for (int i = r, j = c; i >= 0 && j >= 0 && i<8 && j<8; i+=arr[k][0], j+=arr[k][1]) {
-				if (board.getBoard()[i][j].getTeam() == -1 || board.getBoard()[i][j].getTeam() == (getTeam()+1)%2) {
-					int[]move = {i,j};
+		// moves up and right
+		for (int i = 1; i < 8; i++) {
+			if (r + i >= 0 && r + i < 8 && c + i >=0 && c+i <8) {
+				if (board.getBoard()[r+i][c+i].getTeam() != getTeam()) {
+					int[]move = {r+i,c+i};
 					moves.add(move);
-				} else {
+				}
+				if (board.getBoard()[r+i][c+i].getTeam() != -1) {
 					break;
 				}
 			}
 		}
-	
-//		for (int i = c; i < 8; i++) {
-//			int j = r;
-//			if (j < 8) {
-//				if (board.getBoard()[r+i][c+j].getTeam() != getTeam()) {
-//					int[]move = {r+1, c+1};
-//					moves.add(move);
-//					j++;
-//				}
-//			}
-//		}
-//		for (int i = c; i < 8; i++) {
-//			int j = r;
-//			if (j > 0) {
-//				if (board.getBoard()[r-i][c+j].getTeam() != getTeam()) {
-//					int[]move = {r-1, c+1};
-//					moves.add(move);
-//					j--;
-//				}
-//			}
-//		}
-//		for (int i = c; i > 0; i--) {
-//			int j = r;
-//			if (j > 0) {
-//				if (board.getBoard()[r-i][c-j].getTeam() != getTeam()) {
-//					int[]move = {r-1, c-1};
-//					moves.add(move);
-//					j--;
-//				}
-//			}
-//		}
-//		for (int i = c; i > 0; i--) {
-//			int j = r;
-//			if (j < 8) {
-//				if (board.getBoard()[r+i][c-j].getTeam() != getTeam()) {
-//					int[]move = {r+1, c-1};
-//					moves.add(move);
-//					j++;
-//				}
-//			}
-//		}
+		// moves up and left
+		for (int i = 1; i < 8; i++) {
+			if (c + i >= 0 && c + i < 8  && r - i >=0 && r - i <8) {
+				if (board.getBoard()[r-i][c+i].getTeam() != getTeam()) {
+					int[]move = {r-i,c + i};
+					moves.add(move);
+				}
+				if (board.getBoard()[r-i][c+i].getTeam() != -1) {
+					break;
+				}
+			}
+		}
+		// moves down and right
+		for (int i = 1; i < 8; i++) {
+			if (r + i >= 0 && r + i < 8  && c - i >=0 && c-i <8) {
+				if (board.getBoard()[r+i][c-i].getTeam() != getTeam()) {
+					int[]move = {r+i,c-i};
+					moves.add(move);
+				}
+				if (board.getBoard()[r+i][c-i].getTeam() != -1) {
+					break;
+				}
+			}
+		}
+		// moves down and left
+		for (int i = 1; i < 8; i++) {
+			if (c - i >= 0 && c - i < 8  && r - i >=0 && r - i <8) {
+				if (board.getBoard()[r-i][c-i].getTeam() != getTeam()) {
+					int[]move = {r-i,c-i};
+					moves.add(move);
+				}
+				if (board.getBoard()[r-i][c-i].getTeam() != -1) {
+					break;
+				}
+			}
+		}
 		return moves;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean check(int kingr, int kingc, int r, int c, Board board) {
-		// TODO Auto-generated method stub
+		
+		ArrayList<int[]> moves = getMoves(board, r, c);
+		// checks each move to see if it reaches the king
+		for (int[] m : moves) {
+			
+			if (m[0] == kingr && m[1] == kingc) {
+				return true;
+			}
+			
+		}
 		return false;
 	}
 
