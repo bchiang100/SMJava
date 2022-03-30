@@ -10,8 +10,23 @@ public class ListsandReferences {
 		}
 		System.out.println(answer);
 	}
+	public void average(ArrayList<Double> A) {
+		double average = 0;
+		ArrayList<Double> answer = new ArrayList<Double> ();
+		for (int i = 0; i < A.size(); i++) {
+			average += A.get(i);
+		}
+		average /= A.size();
+		answer.add(average);
+	}
 	public static void main(String [] args) {
 		ListsandReferences runner = new ListsandReferences();
-		runner.concatenate(new ArrayList<String> {'h','e','l','l','o'}); 
+		ArrayList<Character> test = new ArrayList<Character> ();
+		test.add('h');
+		test.add('e');
+		test.add('l');
+		test.add('l');
+		test.add('o');
+		runner.concatenate(test); 
 	}
 }
