@@ -44,7 +44,13 @@ public class SpaceInvaders {
 	// and randomly shoots lasers from the aliens
 	public void move() {
 		
-		// your code here
+		for (SpaceThing a : aliens) {
+			if (a.getLocation() == WIDTH) {
+				a.
+			}
+		}
+		
+		
 	}
 	
 	// check for collisions between alien lasers and the player
@@ -52,7 +58,7 @@ public class SpaceInvaders {
 	// check if the aliens have reached the ground
 	public void checkCollisions() {
 		
-		// your code here
+		
 	}
 	
 	// set up your variables, lists, etc here
@@ -74,7 +80,7 @@ public class SpaceInvaders {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		
-		// your code here
+		
 		
 
 		g.setColor(Color.red);

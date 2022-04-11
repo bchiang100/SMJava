@@ -27,7 +27,7 @@ public class SpaceThing extends Rectangle {
 	}
 	
 	// moves x by the inputted amount
-	public void moveX(int dX) {
+	public void  moveX(int dX) {
 		x += dX;
 	}
 	

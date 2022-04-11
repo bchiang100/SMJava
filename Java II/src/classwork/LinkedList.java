@@ -89,6 +89,7 @@ public class LinkedList<Q> {
 	}
 	
 	public int size() {
+		System.out.println(size);
 		return size;
 	}
 	
@@ -101,11 +102,40 @@ public class LinkedList<Q> {
 		}
 		return output;
 	}
+	
+	public Q Josephus() {
+		Q storedInfo = head.info;
+		Node curr = head;
+		while (size != 1) {
+		for (int i = 0; i < size(); i++) {
+			remove((i + 1) % (size));
+			if (curr.next != null) {
+				curr = curr.next;
+				storedInfo = curr.info;
+				System.out.println("stored info is " + storedInfo);
+				System.out.println("i is " + i);
+			} else {
+				i = 0;
+				curr = head;
+			}
+		}
+	}
+		
+		System.out.println(storedInfo);
+		return storedInfo;
+	}
+	
 	public static void main(String [] args) {
 		LinkedList runner = new LinkedList();
+		runner.add(1);
+		runner.add(2,1);
+		runner.add(3);
+		runner.add(4,3);
 		runner.add(5);
-		runner.add(6,1);
-		runner.add(2);
+		runner.add(6);
+		runner.add(7);
+		//runner.add(8);
+		runner.Josephus();
 		System.out.println(runner);
 	}
 }
