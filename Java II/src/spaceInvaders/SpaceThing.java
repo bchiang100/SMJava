@@ -14,7 +14,6 @@ import javax.imageio.ImageIO;
 public class SpaceThing extends Rectangle {
 	
 	private Image img;
-	
 	// constructor takes a location and the name of the image file as parameters
 	public SpaceThing(int x, int y, int w, int h, String imgName) {
 		super(x, y, w, h);
@@ -27,7 +26,7 @@ public class SpaceThing extends Rectangle {
 	}
 	
 	// moves x by the inputted amount
-	public void  moveX(int dX) {
+	public void moveX(int dX) {
 		x += dX;
 	}
 	
@@ -35,6 +34,21 @@ public class SpaceThing extends Rectangle {
 	public void moveY(int dY) {
 		y += dY;
 	}
+	
+	public int getImgWidth() {
+		return width;
+	}
+	public int getImgHeight() {
+		return height; 
+	}
+	public double getX() {
+		return x;
+	}
+	public double getY(){
+		return y;
+	}
+	
+	
 	
 	// draws the image corresponding with this alien/player
 	public void draw(Graphics g) {

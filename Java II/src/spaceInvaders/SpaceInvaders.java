@@ -43,11 +43,33 @@ public class SpaceInvaders {
 	// move the aliens, the lasers, and the player. Loops aliens when necessary, 
 	// and randomly shoots lasers from the aliens
 	public void move() {
-		
-		for (SpaceThing a : aliens) {
-			if (a.getLocation() == WIDTH) {
-				a.
+		// looping aliens' movement
+		for (int i = 0; i < aliens.size(); i++) {
+			if(aliens.get(i).getX() < WIDTH) {
+				aliens.get(i).moveX(ALIENSPEED);
 			}
+			else {
+				aliens.get(i).moveX(-WIDTH);
+				aliens.get(i).moveY(aliens.get(i).getImgHeight());
+			}
+			if (Math.random() > DIFFICULTY) {
+				alienLasers.add(new Laser((int)aliens.get(i).getX(), (int)aliens.get(i).getY(), LASERWIDTH, LASERHEIGHT));
+			}
+		}
+		// laser movement -- alien
+		for (int i = 0; i < alienLasers.size(); i++) {
+			alienLasers.get(i).moveY(LASERSPEED);
+			if (alienLasers.get(i).getY() >= HEIGHT) {
+				alienLasers.remove(i);
+				i--;
+			}
+		}
+		// laser movement -- player
+		
+		// player's movement
+		player.moveX(playerSpeed);
+		if (player.getX() > WIDTH && player.getX() < 0) {
+			player.moveX(-playerSpeed);
 		}
 		
 		
@@ -71,8 +93,11 @@ public class SpaceInvaders {
 	// adds to the list. if there are 4 lasers on the screen, removes a laser and 
 	// replaces it with this new one
 	public void fireLaser() {
+		if (playerLasers.size() >= 4) {
+			playerLasers.remove(0);
+		}
+		playerLasers.add(new Laser((int)player.getX(), (int)player.getY(), LASERWIDTH, LASERHEIGHT));
 		
-		// your code here
 	}
 	
 	// draw a black background along with your lasers, aliens, and player here
