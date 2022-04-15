@@ -16,12 +16,15 @@ public class SpaceInvaders {
 	
 	// constants for various aspects of the game
 	// feel free to change them to make the game harder/easier
-	private final int WIDTH = 1000, HEIGHT = 700, NUMALIENS = 20, ALIENSPEED = 4, LASERSPEED = 7, PLAYERSPEED = 6,
-			LASERWIDTH = 8, LASERHEIGHT = 25, PLAYERENEMYWIDTH = 50, PLAYERENEMYHEIGHT = 35;
+	private int WIDTH = 1000, HEIGHT = 700, NUMALIENS = 10, ALIENSPEED = 5, PLAYERLASERSPEED = 10, ALIENLASERSPEED = 7, PLAYERSPEED = 6,
+			LASERWIDTH = 8, LASERHEIGHT = 25, PLAYERENEMYWIDTH = 50, PLAYERENEMYHEIGHT = 35, LEVEL = 5, MAXLASERS = 4;
 	
 	// determines the difficulty. The closer to 1.0, the easier the game 
-	private final double DIFFICULTY = .99;
-	
+	private double DIFFICULTY = .99;
+	// pretty much god mode
+	private boolean THEMATRIX = false;
+	private boolean SHARPSHOOTER = true;
+		
 	// our list of aliens
 	private ArrayList<SpaceThing> aliens = new ArrayList<SpaceThing>();
 	
@@ -39,6 +42,8 @@ public class SpaceInvaders {
 	private boolean lost = false, paused = true;
 	private boolean won = false;
 	
+	private int levelCount = 1;
+	
 	
 	// move the aliens, the lasers, and the player. Loops aliens when necessary, 
 	// and randomly shoots lasers from the aliens
@@ -53,73 +58,221 @@ public class SpaceInvaders {
 				aliens.get(i).moveY(aliens.get(i).getImgHeight());
 			}
 			if (Math.random() > DIFFICULTY) {
-				alienLasers.add(new Laser((int)aliens.get(i).getX(), (int)aliens.get(i).getY(), LASERWIDTH, LASERHEIGHT));
+				alienLasers.add(new Laser((int)aliens.get(i).getX()+ (int)aliens.get(i).getW()/2 - LASERWIDTH/2, (int)aliens.get(i).getY() + (int)aliens.get(i).getH(), LASERWIDTH, LASERHEIGHT, Color.red));
 			}
 		}
 		// laser movement -- alien
 		for (int i = 0; i < alienLasers.size(); i++) {
-			alienLasers.get(i).moveY(LASERSPEED);
+			alienLasers.get(i).moveY(ALIENLASERSPEED);
 			if (alienLasers.get(i).getY() >= HEIGHT) {
 				alienLasers.remove(i);
 				i--;
 			}
 		}
 		// laser movement -- player
-		
-		// player's movement
-		player.moveX(playerSpeed);
-		if (player.getX() > WIDTH && player.getX() < 0) {
-			player.moveX(-playerSpeed);
+		for (int i = 0; i < playerLasers.size(); i++) {
+			playerLasers.get(i).moveY((int)(-PLAYERLASERSPEED));	
+			if (playerLasers.get(i).getY() <= 0) {
+				playerLasers.remove(i);
+				i--;
+			}
 		}
 		
-		
+		//  player's movement
+		if (player.getX() + player.getW() < WIDTH && player.getX() > 0) {
+			player.moveX(playerSpeed);
+		} 
+		if (player.getX()  + player.getW() >= WIDTH) {
+			if (playerSpeed > 0) {
+				playerSpeed = 0;
+			}
+			player.moveX(playerSpeed);
+		}
+		if (player.getX() <= 0) {
+			if (playerSpeed < 0) {
+				playerSpeed = 0;
+			}
+			player.moveX(playerSpeed);
+		}	
 	}
 	
 	// check for collisions between alien lasers and the player
 	// and between player lasers and the aliens
 	// check if the aliens have reached the ground
 	public void checkCollisions() {
+		// checks for collisions between alien lasers and the player
+		for (int i = 0; i < alienLasers.size(); i++) {
+			if (alienLasers.get(i).getY() + alienLasers.get(i).getH() >= player.getY() && alienLasers.get(i).getY() + alienLasers.get(i).getH() <= player.getY() + player.getH() && alienLasers.get(i).getX() >= player.getX() && alienLasers.get(i).getX() <= player.getX() + player.getW()) {
+				lives--;
+				alienLasers.remove(i);
+				if (i != 0) {
+					i--;
+				}
+				if (lives == 0) {
+					lost = true;
+					return;
+				}
+			}
+		}
 		
+		// checks for collisions between player lasers and an alien
+		for (int i = 0; i < aliens.size(); i++) {
+			for (int j = 0; j < playerLasers.size() && aliens.size() > 0; j++) {
+				if (playerLasers.get(j).getY() <= aliens.get(i).getY() + aliens.get(i).getH() && playerLasers.get(j).getY() >= aliens.get(i).getY() && playerLasers.get(j).getX() >= aliens.get(i).getX() && playerLasers.get(j).getX() <= aliens.get(i).getX() + aliens.get(i).getW()) {
+					aliens.remove(i);
+					playerLasers.remove(j);
+					if (i != 0) {
+						i--;
+					}
+					if (j != 0) {
+						j--;
+					}
+				}
+			}
+		}
 		
+		// checks if all the aliens have been destroyed
+		if (aliens.size() == 0 && levelCount == LEVEL) {
+			won = true;
+			return;
+		}
+		
+		// checks if aliens have reached the ground
+		for (int i = 0; i < aliens.size(); i++) {
+			if (aliens.get(i).getY() + aliens.get(i).getH() >= HEIGHT) {
+				lost = true;
+				return;
+			}
+		}
+		
+		// checks for collisions between player lasers and alien lasers (EXTRA FEATURE #1)
+		for (int i = 0; i < alienLasers.size(); i++) {
+			for (int j = 0; j < playerLasers.size(); j++) {
+				if ((playerLasers.get(j).getY() <= alienLasers.get(i).getY() + alienLasers.get(i).getH() && playerLasers.get(j).getY() >= alienLasers.get(i).getY() && playerLasers.get(j).getX() >= alienLasers.get(i).getX() && playerLasers.get(j).getX() <= alienLasers.get(i).getX() + alienLasers.get(i).getW()) || (playerLasers.get(j).getY() + playerLasers.get(j).getH() <= alienLasers.get(i).getY() + alienLasers.get(i).getH() && playerLasers.get(j).getY() + playerLasers.get(j).getH() >= alienLasers.get(i).getY() && playerLasers.get(j).getX() + playerLasers.get(j).getW() >= alienLasers.get(i).getX() && playerLasers.get(j).getX() + playerLasers.get(j).getW() <= alienLasers.get(i).getX() + alienLasers.get(i).getW())) {
+					alienLasers.remove(i);
+					if (i != 0) {
+						i--;
+					}
+					playerLasers.remove(j);
+					if (j != 0) {
+						j--;
+					}
+				}
+			}
+		}
 	}
 	
 	// set up your variables, lists, etc here
 	public void setup() {
+		int xChange = 0;
+		int yChange = 0;
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < NUMALIENS/2; j++) {
+				aliens.add(new SpaceThing(xChange, yChange, PLAYERENEMYWIDTH, PLAYERENEMYHEIGHT, "Images/alien.png"));
+				xChange += PLAYERENEMYWIDTH;
+			}
+			if (NUMALIENS % 2 == 1 && i == 0) {
+				aliens.add(new SpaceThing(xChange, yChange, PLAYERENEMYWIDTH, PLAYERENEMYHEIGHT, "Images/alien.png"));
+			}
+			xChange = 0;
+			yChange += PLAYERENEMYHEIGHT;
+		}
+		player = new SpaceThing(WIDTH/2 - (PLAYERENEMYWIDTH/2), HEIGHT - 4 * PLAYERENEMYHEIGHT, PLAYERENEMYWIDTH, PLAYERENEMYHEIGHT, "Images/playerCannon.jpg");
 		
-		// your code here
+	}
+	
+	// (EXTRA FEATURE #2) new mode! this game mode is created with inspiration to The Matrix scene where Reeves dodges all the bullets. Have fun!
+	public void thematrix() {
+		if (THEMATRIX) {
+			NUMALIENS = 20;
+			MAXLASERS = 20;
+			DIFFICULTY = 0.97;
+			PLAYERSPEED = 25;
+			ALIENLASERSPEED = 2;
+			PLAYERLASERSPEED = 8;
+			lives = 10;
+		}
+	}
+	// (EXTRA FEATURE #3) new mode! this game mode requires you to be accurate with your shots, as every shot matters. the max amount of lasers you can fire at a time is 1 and the aliens are speedy!
+	public void sharpshooter() {
+		if (SHARPSHOOTER) {
+			PLAYERSPEED = 0;
+			ALIENSPEED = 20;
+			NUMALIENS = 6;
+			MAXLASERS = 1;
+			DIFFICULTY = 2;
+			LEVEL = 2;
+		}
 	}
 	
 	// fires a player laser. if there are currently less than 4 lasers on the screen,
 	// adds to the list. if there are 4 lasers on the screen, removes a laser and 
 	// replaces it with this new one
 	public void fireLaser() {
-		if (playerLasers.size() >= 4) {
+		if (playerLasers.size() >= MAXLASERS) {
 			playerLasers.remove(0);
 		}
-		playerLasers.add(new Laser((int)player.getX(), (int)player.getY(), LASERWIDTH, LASERHEIGHT));
+		playerLasers.add(new Laser((int)player.getX() + (int)player.getW()/2 - LASERWIDTH/2, (int)player.getY(), LASERWIDTH, LASERHEIGHT, Color.green));
 		
+	}
+	
+	public void levels() {
+		if (aliens.size() == 0 && levelCount < LEVEL) {
+			DIFFICULTY *= 0.998;
+			int times = 2;
+			int xChange = 0;
+			int yChange = 0;
+			for (int i = 0; i < 2; i++) {
+				for (int j = 0; j < NUMALIENS / (times / 2); j++) {
+					aliens.add(new SpaceThing(xChange, yChange, PLAYERENEMYWIDTH, PLAYERENEMYHEIGHT, "Images/alien.png"));
+					xChange += PLAYERENEMYWIDTH;
+				}
+				if (NUMALIENS % 2 == 1 && i == 0) {
+					aliens.add(new SpaceThing(xChange, yChange, PLAYERENEMYWIDTH, PLAYERENEMYHEIGHT, "Images/alien.png"));
+				}
+				xChange = 0;
+				yChange += PLAYERENEMYHEIGHT;
+			}
+			levelCount++;
+		}
 	}
 	
 	// draw a black background along with your lasers, aliens, and player here
 	public void draw(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
+		if (!lost && !won) {
+			g.setColor(Color.red);
+			g.drawString("Lives: "+lives, 15, 15);
+			g.drawString("Level: " + levelCount + " out of " + LEVEL, 15, 30);
+			for (SpaceThing alien : aliens) {
+				alien.draw(g);
+			}
+			for (Laser aLaser : alienLasers) {
+				aLaser.draw(g);
+			}
+			player.draw(g);
+			for (Laser pLaser : playerLasers) {
+				pLaser.draw(g);
+			}
+		}
+	
 		
-		
-		
-
-		g.setColor(Color.red);
-		g.drawString("Lives: "+lives, 15, 15);
-		
-		if (lost) 
+		if (lost) {
+			g.setColor(Color.white);
 			g.drawString("You lose", WIDTH/2-25, HEIGHT/2);
-		if (won) 
+		}
+		if (won) {
+			g.setColor(Color.white);
 			g.drawString("You win!", WIDTH/2-25, HEIGHT/2);
+		}
 	}
 	
 	// ******* DON'T TOUCH BELOW CODE ************//
 	
 	public SpaceInvaders() {
+		thematrix();
+		sharpshooter();
 		setup();
 		JFrame frame = new JFrame();
 		frame.setSize(WIDTH, HEIGHT);
@@ -147,6 +300,7 @@ public class SpaceInvaders {
 			if (!paused) {
 				move();
 				checkCollisions();
+				levels();
 				frame.getContentPane().repaint();
 			}
 			try {Thread.sleep(20);} 

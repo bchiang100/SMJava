@@ -17,7 +17,6 @@ public class SpaceThing extends Rectangle {
 	// constructor takes a location and the name of the image file as parameters
 	public SpaceThing(int x, int y, int w, int h, String imgName) {
 		super(x, y, w, h);
-		
 		try {
 			img = ImageIO.read(new File(imgName)).getScaledInstance(w, h, Image.SCALE_SMOOTH);
 		} catch (IOException e) {
@@ -46,6 +45,12 @@ public class SpaceThing extends Rectangle {
 	}
 	public double getY(){
 		return y;
+	}
+	public int getW() {
+		return width;
+	}
+	public int getH() {
+		return height;
 	}
 	
 	
