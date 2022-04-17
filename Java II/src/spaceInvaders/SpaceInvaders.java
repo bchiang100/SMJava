@@ -17,13 +17,13 @@ public class SpaceInvaders {
 	// constants for various aspects of the game
 	// feel free to change them to make the game harder/easier
 	private int WIDTH = 1000, HEIGHT = 700, NUMALIENS = 10, ALIENSPEED = 5, PLAYERLASERSPEED = 10, ALIENLASERSPEED = 7, PLAYERSPEED = 6,
-			LASERWIDTH = 8, LASERHEIGHT = 25, PLAYERENEMYWIDTH = 50, PLAYERENEMYHEIGHT = 35, LEVEL = 5, MAXLASERS = 4;
+			LASERWIDTH = 8, LASERHEIGHT = 25, PLAYERENEMYWIDTH = 50, PLAYERENEMYHEIGHT = 35, LEVEL = 3, MAXLASERS = 4;
 	
 	// determines the difficulty. The closer to 1.0, the easier the game 
 	private double DIFFICULTY = .99;
-	// pretty much god mode
-	private boolean THEMATRIX = false;
-	private boolean SHARPSHOOTER = true;
+	// toggle between the different modes
+	private boolean THEMATRIX = true;
+	private boolean SHARPSHOOTER = false;
 		
 	// our list of aliens
 	private ArrayList<SpaceThing> aliens = new ArrayList<SpaceThing>();
@@ -145,7 +145,7 @@ public class SpaceInvaders {
 			}
 		}
 		
-		// checks for collisions between player lasers and alien lasers (EXTRA FEATURE #1)
+		// (EXTRA FEATURE #1) checks for collisions between player lasers and alien lasers
 		for (int i = 0; i < alienLasers.size(); i++) {
 			for (int j = 0; j < playerLasers.size(); j++) {
 				if ((playerLasers.get(j).getY() <= alienLasers.get(i).getY() + alienLasers.get(i).getH() && playerLasers.get(j).getY() >= alienLasers.get(i).getY() && playerLasers.get(j).getX() >= alienLasers.get(i).getX() && playerLasers.get(j).getX() <= alienLasers.get(i).getX() + alienLasers.get(i).getW()) || (playerLasers.get(j).getY() + playerLasers.get(j).getH() <= alienLasers.get(i).getY() + alienLasers.get(i).getH() && playerLasers.get(j).getY() + playerLasers.get(j).getH() >= alienLasers.get(i).getY() && playerLasers.get(j).getX() + playerLasers.get(j).getW() >= alienLasers.get(i).getX() && playerLasers.get(j).getX() + playerLasers.get(j).getW() <= alienLasers.get(i).getX() + alienLasers.get(i).getW())) {
@@ -181,26 +181,27 @@ public class SpaceInvaders {
 		
 	}
 	
-	// (EXTRA FEATURE #2) new mode! this game mode is created with inspiration to The Matrix scene where Reeves dodges all the bullets. Have fun!
+	// (EXTRA FEATURE #2) new mode! this game mode is created with inspiration to The Matrix. Have fun!
 	public void thematrix() {
 		if (THEMATRIX) {
+			DIFFICULTY = 0.975;
 			NUMALIENS = 20;
-			MAXLASERS = 20;
-			DIFFICULTY = 0.97;
-			PLAYERSPEED = 25;
 			ALIENLASERSPEED = 2;
 			PLAYERLASERSPEED = 8;
-			lives = 10;
+			PLAYERSPEED = 7;
+			MAXLASERS = 10;
+			lives = 5;
+			LEVEL = 5;
 		}
 	}
 	// (EXTRA FEATURE #3) new mode! this game mode requires you to be accurate with your shots, as every shot matters. the max amount of lasers you can fire at a time is 1 and the aliens are speedy!
 	public void sharpshooter() {
 		if (SHARPSHOOTER) {
-			PLAYERSPEED = 0;
+			DIFFICULTY = 1;
+			NUMALIENS = 8;
 			ALIENSPEED = 20;
-			NUMALIENS = 6;
+			PLAYERSPEED = 0;
 			MAXLASERS = 1;
-			DIFFICULTY = 2;
 			LEVEL = 2;
 		}
 	}
@@ -216,6 +217,7 @@ public class SpaceInvaders {
 		
 	}
 	
+	// (EXTRA FEATURE #4) enables the player to choose how many levels they want in the game (can be changed by changing the constant at the top of code)
 	public void levels() {
 		if (aliens.size() == 0 && levelCount < LEVEL) {
 			DIFFICULTY *= 0.998;
@@ -257,14 +259,33 @@ public class SpaceInvaders {
 			}
 		}
 	
-		
+		// prints "you lost" if you lose
 		if (lost) {
 			g.setColor(Color.white);
 			g.drawString("You lose", WIDTH/2-25, HEIGHT/2);
 		}
+		// prints "you win" if you win
 		if (won) {
 			g.setColor(Color.white);
 			g.drawString("You win!", WIDTH/2-25, HEIGHT/2);
+		}
+		if (lives == 1) {
+			g.setColor(Color.red);
+			g.drawString("ONE LIFE LEFT!!!", WIDTH/2, 30);
+		}
+		if (!THEMATRIX && !SHARPSHOOTER) {
+			g.setColor(Color.white);
+			g.drawString("Mode: Normal", 15, 45);
+		}
+		if (THEMATRIX) {
+			g.setColor(Color.yellow);
+			g.drawString("Mode: The Matrix", 15, 45);
+			g.drawString("Make sure to dodge all the lasers by shooting them out!", 15, 60);
+		}
+		if (SHARPSHOOTER) {
+			g.setColor(Color.yellow);
+			g.drawString("Mode: Sharpshooter", 15, 45);
+			g.drawString("Shoot them all before they reach the bottom! Remember, YOU CAN'T MOVE!!!", 15, 60);
 		}
 	}
 	
