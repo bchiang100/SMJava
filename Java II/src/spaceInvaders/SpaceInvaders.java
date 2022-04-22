@@ -22,9 +22,9 @@ public class SpaceInvaders {
 	// determines the difficulty. The closer to 1.0, the easier the game 
 	private double DIFFICULTY = .99;
 	// toggle between the different modes
-	private boolean THEMATRIX = true;
-	private boolean SHARPSHOOTER = false;
-		
+	private boolean THEMATRIX = false;
+	private boolean SHARPSHOOTER = true;
+	
 	// our list of aliens
 	private ArrayList<SpaceThing> aliens = new ArrayList<SpaceThing>();
 	
@@ -102,7 +102,7 @@ public class SpaceInvaders {
 	public void checkCollisions() {
 		// checks for collisions between alien lasers and the player
 		for (int i = 0; i < alienLasers.size(); i++) {
-			if (alienLasers.get(i).getY() + alienLasers.get(i).getH() >= player.getY() && alienLasers.get(i).getY() + alienLasers.get(i).getH() <= player.getY() + player.getH() && alienLasers.get(i).getX() >= player.getX() && alienLasers.get(i).getX() <= player.getX() + player.getW()) {
+			if (alienLasers.get(i).intersects(player)) {
 				lives--;
 				alienLasers.remove(i);
 				if (i != 0) {
@@ -118,7 +118,7 @@ public class SpaceInvaders {
 		// checks for collisions between player lasers and an alien
 		for (int i = 0; i < aliens.size(); i++) {
 			for (int j = 0; j < playerLasers.size() && aliens.size() > 0; j++) {
-				if (playerLasers.get(j).getY() <= aliens.get(i).getY() + aliens.get(i).getH() && playerLasers.get(j).getY() >= aliens.get(i).getY() && playerLasers.get(j).getX() >= aliens.get(i).getX() && playerLasers.get(j).getX() <= aliens.get(i).getX() + aliens.get(i).getW()) {
+				if (playerLasers.get(j).intersects(aliens.get(i))) {
 					aliens.remove(i);
 					playerLasers.remove(j);
 					if (i != 0) {
@@ -145,16 +145,16 @@ public class SpaceInvaders {
 			}
 		}
 		
-		// (EXTRA FEATURE #1) checks for collisions between player lasers and alien lasers
+		// (MINI EXTRA FEATURE #1) checks for collisions between player lasers and alien lasers
 		for (int i = 0; i < alienLasers.size(); i++) {
 			for (int j = 0; j < playerLasers.size(); j++) {
-				if ((playerLasers.get(j).getY() <= alienLasers.get(i).getY() + alienLasers.get(i).getH() && playerLasers.get(j).getY() >= alienLasers.get(i).getY() && playerLasers.get(j).getX() >= alienLasers.get(i).getX() && playerLasers.get(j).getX() <= alienLasers.get(i).getX() + alienLasers.get(i).getW()) || (playerLasers.get(j).getY() + playerLasers.get(j).getH() <= alienLasers.get(i).getY() + alienLasers.get(i).getH() && playerLasers.get(j).getY() + playerLasers.get(j).getH() >= alienLasers.get(i).getY() && playerLasers.get(j).getX() + playerLasers.get(j).getW() >= alienLasers.get(i).getX() && playerLasers.get(j).getX() + playerLasers.get(j).getW() <= alienLasers.get(i).getX() + alienLasers.get(i).getW())) {
+				if (alienLasers.get(i).intersects(playerLasers.get(j))) {
 					alienLasers.remove(i);
-					if (i != 0) {
+					if (i!=0) {
 						i--;
 					}
 					playerLasers.remove(j);
-					if (j != 0) {
+					if (j!=0) {
 						j--;
 					}
 				}
@@ -181,7 +181,7 @@ public class SpaceInvaders {
 		
 	}
 	
-	// (EXTRA FEATURE #2) new mode! this game mode is created with inspiration to The Matrix. Have fun!
+	// (MINI EXTRA FEATURE #2) new mode! this game mode is created with inspiration to The Matrix. Have fun!
 	public void thematrix() {
 		if (THEMATRIX) {
 			DIFFICULTY = 0.975;
@@ -194,10 +194,10 @@ public class SpaceInvaders {
 			LEVEL = 5;
 		}
 	}
-	// (EXTRA FEATURE #3) new mode! this game mode requires you to be accurate with your shots, as every shot matters. the max amount of lasers you can fire at a time is 1 and the aliens are speedy!
+	// (MINI EXTRA FEATURE #3) new mode! this game mode requires you to be accurate with your shots, as every shot matters. the max amount of lasers you can fire at a time is 1 and the aliens are speedy!
 	public void sharpshooter() {
 		if (SHARPSHOOTER) {
-			DIFFICULTY = 1;
+			DIFFICULTY = 2;
 			NUMALIENS = 8;
 			ALIENSPEED = 20;
 			PLAYERSPEED = 0;
@@ -217,7 +217,7 @@ public class SpaceInvaders {
 		
 	}
 	
-	// (EXTRA FEATURE #4) enables the player to choose how many levels they want in the game (can be changed by changing the constant at the top of code)
+	// (MAIN EXTRA FEATURE #4) enables the player to choose how many levels they want in the game (can be changed by changing the constant at the top of code)
 	public void levels() {
 		if (aliens.size() == 0 && levelCount < LEVEL) {
 			DIFFICULTY *= 0.998;
