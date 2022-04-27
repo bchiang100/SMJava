@@ -33,13 +33,15 @@ public class EnglishtoArabicTranslator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Which English word would you like to translate to Arabic?");
-		word = input.nextLine();
-		// I don't know why but when I input "hello" (first word in list) it will return null but I double checked the code and nothing seems to be wrong.
-		if (!word.equals("hello")) {
-			System.out.println("The Arabic translation of " + word + " is " + words.get(word));
-		} else {
-			System.out.println("The Arabic translation of " + word + " is Ahllan");
+		while (true) {
+			System.out.println("Which English word would you like to translate to Arabic?");
+			word = input.nextLine();
+			// I don't know why but when I input "hello" (first word in list) it will return null but I double checked the code and nothing seems to be wrong.
+			if (!word.equals("hello")) {
+				System.out.println("The Arabic translation of " + word + " is " + words.get(word));
+			} else {
+				System.out.println("The Arabic translation of " + word + " is Ahllan");
+			}
 		}
 	}
 }
