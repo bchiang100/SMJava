@@ -1,5 +1,6 @@
 package homework;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -19,6 +20,7 @@ public class MorewithMaps {
 						max = index;
 					}
 				}
+				System.out.println(max);
 				return max;
 			}
 			if (!n.equals("average")) {
@@ -32,6 +34,24 @@ public class MorewithMaps {
 			}
 		}
 	}
+	
+	public String[] chaintargets(HashMap<String, String> names) {
+        System.out.println("Input starting name: ");
+        String start = input.nextLine();
+        String[] players = new String[names.size()];
+        String curr = start;
+        int i = 0;
+        players[i] = start;
+        for (i = 1; i < names.size(); i++) {
+            curr = names.get(curr);
+            if (curr == start) {
+                break;
+            }
+            players[i] = curr;
+        }
+        System.out.println(Arrays.toString(players));
+        return players;
+    }
 	
 	public String morseCode() {
 		String message;
@@ -79,7 +99,16 @@ public class MorewithMaps {
 	}
 	public static void main(String [] args) {
 		MorewithMaps runner = new MorewithMaps();
-		//runner.stock(new HashMap)
-		runner.morseCode();
+		HashMap<String, Integer> stock = new HashMap<String, Integer>();
+		stock.put("Apple", 82923523);
+		stock.put("Meta", 98762342);
+		stock.put("Microsoft", 2348276);
+		HashMap<String, String> chain = new HashMap<String, String>();
+		chain.put("Cooper", "Ryan");
+		chain.put("Ryan", "Hanson");
+		chain.put("Hanson", "Cooper");
+		runner.chaintargets(chain);
+		//runner.stock(stock);
+		//runner.morseCode();
 	}
 }
