@@ -22,8 +22,8 @@ public class SpaceInvaders {
 	// determines the difficulty. The closer to 1.0, the easier the game 
 	private double DIFFICULTY = .99;
 	// toggle between the different modes
-	private boolean THEMATRIX = false;
-	private boolean SHARPSHOOTER = true;
+	private boolean THEMATRIX = true;
+	private boolean SHARPSHOOTER = false;
 	
 	// our list of aliens
 	private ArrayList<SpaceThing> aliens = new ArrayList<SpaceThing>();
