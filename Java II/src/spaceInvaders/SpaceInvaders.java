@@ -247,7 +247,7 @@ public class SpaceInvaders {
 			g.setColor(Color.red);
 			g.drawString("Lives: "+lives, 15, 15);
 			g.drawString("Level: " + levelCount + " out of " + LEVEL, 15, 30);
-			for (SpaceThing alien : aliens) {
+			for (SpaceThing alien : aliens) { 
 				alien.draw(g);
 			}
 			for (Laser aLaser : alienLasers) {

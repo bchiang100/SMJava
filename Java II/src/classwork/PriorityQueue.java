@@ -15,7 +15,7 @@ public class PriorityQueue<T> {
 		public void push(T info, int p) {
 			for (int i = 0; i < queue.size(); i++) {
 				if (queue.get(i).priority < p) {
-					queue.add( i,new Bundle(info, p));
+					queue.add(i ,new Bundle(info, p));
 					return;
 				}
 			}
