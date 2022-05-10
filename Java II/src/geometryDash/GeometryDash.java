@@ -16,64 +16,119 @@ import javax.swing.KeyStroke;
 
 // Draw the player - done
 // Make the player jump in a quadratic path - done
-// Make the course blocks
-// Move the course blocks
+// Make the course blocks - 50% done
+// Move the course blocks - pretty much done
+// Create pre-generated mini-obstacle courses
+
 // Make the player rotate when jumping (like in Geometry Dash)
+
+// Current Issues:
+
+// I can't make the preset appear in the game. The method runs though
+// Need to figure out whether I should use one obstacle arraylist for both triangle and squares or stick with the two.
 
 public class GeometryDash {
 	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = 50, PLAYERHEIGHT = 50;
 	private boolean lost = false, won = false, paused = true, jumping = false;
 	
 	// list of obstacles
-	private ArrayList<GeometryObject> obstacles = new ArrayList<GeometryObject>();
-	
+	private ArrayList<GeometryObject> triangleObstacles = new ArrayList<GeometryObject>();
+	private ArrayList<GeometryObject> squareObstacles = new ArrayList<GeometryObject>();
+	private GeometryObject[] preset1 = new GeometryObject[8];
 	//DONT CHANGE
 	private GeometryObject player;
-	private int backgroundSpeed = 0, gravity = 2, defaultPlayerSpeed = -20, playerSpeed = defaultPlayerSpeed, numObstacles = 20, timerCount = 50;
+	private GeometryObject backgroundImg;
+	private int backgroundSpeed = -10, gravity = 2, defaultPlayerSpeed = -20, playerSpeed = defaultPlayerSpeed, numObstacles = 20, timerCount = 0, groundHeight = (int)(HEIGHT * 0.675), obstacleCount = 0;;
 	public void move() {
-		if (player.y < (HEIGHT/2 - PLAYERHEIGHT/2) && jumping == false) {
+		if (player.y < groundHeight && jumping == false) {
 			playerSpeed += gravity;
 			player.moveY(playerSpeed);
 		}
-		if (player.y > (HEIGHT/2 - PLAYERHEIGHT/2) + 1) {
-			player.y = (HEIGHT/2 - PLAYERHEIGHT/2);
+		if (player.y > groundHeight + 1) {
+			player.y = groundHeight;
 			playerSpeed = defaultPlayerSpeed;
 		}
-		for (int i = 0; i < obstacles.size(); i++) {
-			obstacles.get(i).moveX(-2);
+		for (int i = 0; i < triangleObstacles.size(); i++) {
+			triangleObstacles.get(i).moveX(backgroundSpeed);
 		}
 	}
 	int count = 0;
 	public void jump() {
-		// Problem: I can't get the cube to move at a quadratic path (it won't move at all)
 		if (jumping == true) {
-		jumping = true;
-		playerSpeed += gravity;
-		player.moveY(playerSpeed);
+			playerSpeed += gravity;
+			player.moveY(playerSpeed);
 		}
 	}
 	public void checkCollisions() {
-		
+		for (int i = 0; i < triangleObstacles.size(); i++) {
+			if (triangleObstacles.get(i).x + PLAYERWIDTH <= 0) {
+				triangleObstacles.remove(i);
+				continue;
+			}
+			if (triangleObstacles.get(i).intersects(player)) {
+				lost = true;
+			}
+		}
+	}
+	public void loadPreset1() {
+		// loads obstacle preset1
+		preset1[0] = new GeometryObject((int)WIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/TriangleObstacle.jpg");
+		preset1[1] = new GeometryObject((int)WIDTH + PLAYERWIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/TriangleObstacle.jpg");
+		preset1[2] = new GeometryObject((int)WIDTH + 2 * PLAYERWIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png");
+		preset1[3] = new GeometryObject((int)WIDTH + 6 * PLAYERWIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png");
+		preset1[4] = new GeometryObject((int)WIDTH + 6 * PLAYERWIDTH, groundHeight - PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png");
+		preset1[5] = new GeometryObject((int)WIDTH + 10 * PLAYERWIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png");
+		preset1[6] = new GeometryObject((int)WIDTH + 6 * PLAYERWIDTH, groundHeight - PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png");
+		preset1[7] = new GeometryObject((int)WIDTH + 6 * PLAYERWIDTH, groundHeight - 2 * PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png");
 	}
 	public void setup() {
-		player = new GeometryObject((int)(WIDTH/4), (int)(HEIGHT/2 - PLAYERHEIGHT/2), PLAYERWIDTH, PLAYERHEIGHT, "Images/Cube.png");
+		backgroundImg = new GeometryObject(0, 0, WIDTH, HEIGHT, "Images/GeometryDashBackground.jpeg");
+		player = new GeometryObject((int)(WIDTH/4), groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/Cube.png");
 		
 	}
 	public void spawnObstacles() {
 		double random = (Math.random() * 100) + 1;
-		int obstacleCount = 0;
-		if (random > 98.5 & timerCount >= 75) {
-			obstacles.add(new GeometryObject((int)WIDTH + 1, (int)(HEIGHT/2 - PLAYERHEIGHT/2), PLAYERWIDTH, PLAYERHEIGHT, "Images/Obstacle.png"));
+		if (random > 98.5 && timerCount >= 50 && obstacleCount < 3) {
+			triangleObstacles.add(new GeometryObject((int)WIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/TriangleObstacle.jpg"));
 			obstacleCount++;
 			timerCount = 0;
+			System.out.println("obstacle count is " + obstacleCount + " and timercount is " + timerCount);
+		}
+		if (random > 99.8 && timerCount >= 100) {
+			System.out.println("it worked");
+			loadPreset1();
+			obstacleCount = 0;
 		}
 		timerCount++;
 	}
+	public void drawObstacles(Graphics g) {
+		for (int i = 0; i < triangleObstacles.size(); i++) {
+			triangleObstacles.get(i).draw(g);
+		}
+	}
 	public void draw(Graphics g) {
-		Color backgroundColor = new Color (51, 51, 255);
-		g.setColor(backgroundColor);
-		g.fillRect(0, 0, WIDTH, HEIGHT);
-		player.draw(g);
+		backgroundImg.draw(g);
+		if (!lost && !won) {
+			player.draw(g);
+			for (int i = 0; i < triangleObstacles.size(); i++) {
+				triangleObstacles.get(i).draw(g);
+			}
+			// it wont draw for some reason
+			for (int i = 0; i < preset1.length; i++) {
+				if (preset1[i] != null) {
+					preset1[i].draw(g);
+				}
+			}
+		}
+		if (lost) {
+			g.setColor(Color.white);
+			g.drawString("You lose", WIDTH/2-25, HEIGHT/2);
+		}
+		// prints "you win" if you win
+		if (won) {
+			g.setColor(Color.white);
+			g.drawString("You win!", WIDTH/2-25, HEIGHT/2);
+		}
 	}
 	
 	
