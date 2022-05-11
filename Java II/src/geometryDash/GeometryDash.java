@@ -81,6 +81,7 @@ public class GeometryDash {
 		preset1[6] = new GeometryObject((int)WIDTH + 6 * PLAYERWIDTH, groundHeight - PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png");
 		preset1[7] = new GeometryObject((int)WIDTH + 6 * PLAYERWIDTH, groundHeight - 2 * PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png");
 	}
+	
 	public void setup() {
 		backgroundImg = new GeometryObject(0, 0, WIDTH, HEIGHT, "Images/GeometryDashBackground.jpeg");
 		player = new GeometryObject((int)(WIDTH/4), groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/Cube.png");
