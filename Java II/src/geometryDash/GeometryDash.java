@@ -16,103 +16,137 @@ import javax.swing.KeyStroke;
 
 // Draw the player - done
 // Make the player jump in a quadratic path - done
-// Make the course blocks - 50% done
-// Move the course blocks - pretty much done
-// Create pre-generated mini-obstacle courses
+// Make the course blocks - done
+// Move the course blocks - done
+// Create pre-generated mini-obstacle courses - in progress
+// Load the obstacle course before the game starts (add loading screen maybe?) - in progress, 40% complete
+// Add audio?
 
 // Make the player rotate when jumping (like in Geometry Dash)
 
 // Current Issues:
 
-// I can't make the preset appear in the game. The method runs though
-// Need to figure out whether I should use one obstacle arraylist for both triangle and squares or stick with the two.
+// I can't make the preset appear in the game. The method runs though - done
+// Need to figure out whether I should use one obstacle arraylist for both triangle and squares or stick with the two. - done
+// I need to fix the jumping problem when on a block
+// Triangle's intersect function never returns true
+
 
 public class GeometryDash {
-	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = 50, PLAYERHEIGHT = 50;
-	private boolean lost = false, won = false, paused = true, jumping = false;
+	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = 50, PLAYERHEIGHT = 50, DIFFICULTY = 30;
 	
 	// list of obstacles
 	private ArrayList<GeometryObject> obstacles = new ArrayList<GeometryObject>();
-	private GeometryObject[] preset1 = new GeometryObject[8];
+
 	//DONT CHANGE
 	private GeometryObject player;
 	private GeometryObject backgroundImg;
-	private int backgroundSpeed = -10, gravity = 3, defaultPlayerSpeed = -40, playerSpeed = defaultPlayerSpeed, numObstacles = 20, timerCount = 0, groundHeight = (int)(HEIGHT * 0.675), obstacleCount = 0;;
+	private int backgroundSpeed = -7, gravity = 1, defaultPlayerSpeed = -15 , playerSpeed = defaultPlayerSpeed, timerCount = 150, groundHeight = 472, obstacleCount = 0, presetWidth = 0, obstacleHeight = 0;
+	private boolean lost = false, won = false, paused = true, jumping = false, spawn = true;
+	// don't forget, groundHeight is actually 472 pixels above the ground
 	public void move() {
-		if (player.y < groundHeight && jumping == false) {
+		System.out.println(obstacleHeight);
+		if (player.y < groundHeight - obstacleHeight && jumping == false) {
 			playerSpeed += gravity;
 			player.moveY(playerSpeed);
+			//System.out.println(player.y + " is less than " + groundHeight + " - " + obstacleHeight);
 		}
-		if (player.y > groundHeight + 1) {
-			player.y = groundHeight;
+		if (player.y > groundHeight - obstacleHeight) {
+			player.y = groundHeight - obstacleHeight;
 			playerSpeed = defaultPlayerSpeed;
 		}
 		for (int i = 0; i < obstacles.size(); i++) {
 			obstacles.get(i).moveX(backgroundSpeed);
 		}
 	}
-	int count = 0;
+	
 	public void jump() {
 		if (jumping == true) {
-			playerSpeed += gravity;
 			player.moveY(playerSpeed);
+			playerSpeed += gravity;
+			
 		}
 	}
 	public void checkCollisions() {
+		int dGravity = gravity;
 		for (int i = 0; i < obstacles.size(); i++) {
 			if (obstacles.get(i).x + PLAYERWIDTH <= 0) {
 				obstacles.remove(i);
 				continue;
 			}
-			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 2) {
+			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 1) {
 				lost = true;
 			}
-			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 1) {
-				if (player.x >= obstacles.get(i).x) {
-					player.y = groundHeight - obstacles.get(i).height;
+			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 0) {
+				// I subtracted by playerSpeed since the player y value is not actually the obstacle's y value when it intersects, but rather a little below the obstacle
+				if(player.y + player.height - playerSpeed <= obstacles.get(i).y) {
+						obstacleHeight = groundHeight + player.height - obstacles.get(i).y;
+						player.y = obstacles.get(i).y - player.height;
+						playerSpeed = defaultPlayerSpeed;
+						//System.out.println(obstacleHeight);
 				} else {
 					lost = true;
 				}
+			
+			}
+			
+		
+			
+			// temporary win condition
+			if (player.x + player.width > obstacles.get(obstacles.size() - 1).x) {
+				won = true;
 			}
 		}
 	}
 	public void loadPreset1() {
 		// loads obstacle preset1
-		obstacles.add(new GeometryObject((int)WIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/TriangleObstacle.jpg", 2));
-		obstacles.add(new GeometryObject((int)WIDTH + PLAYERWIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/TriangleObstacle.jpg", 2));
-		obstacles.add(new GeometryObject((int)WIDTH + 2 * PLAYERWIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png", 1));
-		obstacles.add(new GeometryObject((int)WIDTH + 6 * PLAYERWIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png", 1));
-		obstacles.add(new GeometryObject((int)WIDTH + 6 * PLAYERWIDTH, groundHeight - PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png", 1));
-		obstacles.add(new GeometryObject((int)WIDTH + 10 * PLAYERWIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png", 1));
-		obstacles.add(new GeometryObject((int)WIDTH + 10 * PLAYERWIDTH, groundHeight - PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png", 1));
-		obstacles.add(new GeometryObject((int)WIDTH + 10 * PLAYERWIDTH, groundHeight - 2 * PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png", 1));
+		obstacles.add(new TriangleObstacle((int)WIDTH + presetWidth, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/TriangleObstacle.png"));
+		obstacles.add(new TriangleObstacle((int)WIDTH + PLAYERWIDTH + presetWidth, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/TriangleObstacle.png"));
+		obstacles.add(new GeometryObject((int)WIDTH + 2 * PLAYERWIDTH + presetWidth, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
+		obstacles.add(new GeometryObject((int)WIDTH + 6 * PLAYERWIDTH + presetWidth, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
+		obstacles.add(new GeometryObject((int)WIDTH + 6 * PLAYERWIDTH + presetWidth, groundHeight - PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
+		obstacles.add(new GeometryObject((int)WIDTH + 10 * PLAYERWIDTH + presetWidth, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
+		obstacles.add(new GeometryObject((int)WIDTH + 10 * PLAYERWIDTH + presetWidth, groundHeight - PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
+		obstacles.add(new GeometryObject((int)WIDTH + 10 * PLAYERWIDTH + presetWidth, groundHeight - 2 * PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
 	}
 	
+	public void loadPreset2() {
+		obstacles.add(new GeometryObject((int)WIDTH + presetWidth, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
+		obstacles.add(new GeometryObject((int)WIDTH + 3 * PLAYERWIDTH + presetWidth, groundHeight - PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
+		obstacles.add(new GeometryObject((int)WIDTH + 6 * PLAYERWIDTH + presetWidth, groundHeight - 2 * PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
+		obstacles.add(new GeometryObject((int)WIDTH + 8 * PLAYERWIDTH + presetWidth, groundHeight - 2 * PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
+		obstacles.add(new GeometryObject((int)WIDTH + 9 * PLAYERWIDTH + presetWidth, groundHeight - 2 * PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
+		obstacles.add(new GeometryObject((int)WIDTH + 10 * PLAYERWIDTH + presetWidth, groundHeight - 2 * PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
+		obstacles.add(new GeometryObject((int)WIDTH + 11 * PLAYERWIDTH + presetWidth, groundHeight - 2 * PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/SquareObstacle.png"));
+		obstacles.add(new TriangleObstacle((int)WIDTH + 11 * PLAYERWIDTH + presetWidth, groundHeight - 3 * PLAYERHEIGHT, PLAYERWIDTH, PLAYERHEIGHT, "Images/TriangleObstacle.png"));
+	}
 	public void setup() {
-		backgroundImg = new GeometryObject(0, 0, WIDTH, HEIGHT, "Images/GeometryDashBackground.jpeg", 0);
-		player = new GeometryObject((int)(WIDTH/4), groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/Cube.png", 1);
+		backgroundImg = new GeometryObject(0, 0, WIDTH, HEIGHT, "Images/GeometryDashBackground.jpeg");
+		player = new GeometryObject((int)(WIDTH/4), groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/Cube.png");
 	
 	}
 	public void spawnObstacles() {
-		double random = (Math.random() * 100) + 1;
-//		if (random > 98.5 && timerCount >= 50 && obstacleCount < 3) {
-//			obstacles.add(new GeometryObject((int)WIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/TriangleObstacle.jpg", 2));
-//			obstacleCount++;
-//			timerCount = 0;
-//			System.out.println("obstacle count is " + obstacleCount + " and timercount is " + timerCount);
-//		}
-		if (random > 99.8 && timerCount >= 100) {
-			System.out.println("it worked");
-			loadPreset1();
-			obstacleCount = 0;
+		
+		if (obstacles.size() < DIFFICULTY) {
+			double random = (Math.random() * 100) + 1;
+			//System.out.println(random);
+			presetWidth += 6;
+			if (random > 1 && random < 1.8 && timerCount > 150) {
+				loadPreset1();
+				timerCount = 0;
+			}
+			if (random > 1.8 && random < 2.3 && timerCount > 150) {
+				loadPreset2();
+				timerCount = 0;
+			}
+			timerCount++;
 		}
-		timerCount++;
+		else {
+			spawn = false;
+			paused = !paused;
+		}
 	} 
-	public void drawObstacles(Graphics g) {
-		for (int i = 0; i < obstacles.size(); i++) {
-			obstacles.get(i).draw(g);
-		}
-	}
+	
 	public void draw(Graphics g) {
 		backgroundImg.draw(g);
 		if (!lost && !won) {
@@ -120,13 +154,11 @@ public class GeometryDash {
 			for (int i = 0; i < obstacles.size(); i++) {
 				obstacles.get(i).draw(g);
 			}
-			// it wont draw for some reason
-			for (int i = 0; i < preset1.length; i++) {
-				if (preset1[i] != null) {
-					preset1[i].draw(g);
-				}
-			}
 		}
+		int progress = obstacles.get(obstacles.size()-1).x - player.x - player.width;
+		g.drawRect(WIDTH/6, HEIGHT/12, 2*WIDTH/3, HEIGHT/12);
+		g.fillRect(WIDTH/6, HEIGHT/12, (player.x + player.width)/progress * 2*WIDTH/3, HEIGHT/12);
+		//System.out.println(obstacles.get(obstacles.size()-1).x/progress);
 		if (lost) {
 			g.setColor(Color.white);
 			g.drawString("You lose", WIDTH/2-25, HEIGHT/2);
@@ -155,7 +187,7 @@ public class GeometryDash {
 		@Override
 		public void keyTyped(KeyEvent e) {				
 			if (e.getKeyChar() == 'p') {
-				paused = false;
+				paused = !paused;
 			}
 		}
 
@@ -173,16 +205,16 @@ public class GeometryDash {
 				jumping = false;
 			}
 		}
-		
 	});
 	frame.add(canvas);
 	frame.setVisible(true);
-	
+	while (spawn == true) {
+		spawnObstacles();
+	}
 	while (true) {
 		if (!paused) {
 			jump();
 			move();
-			spawnObstacles();
 			checkCollisions();
 			frame.getContentPane().repaint();
 		}

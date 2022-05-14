@@ -10,10 +10,8 @@ import javax.imageio.ImageIO;
 
 public class GeometryObject extends Rectangle{
 	private Image img;
-	private int type;
-	public GeometryObject(int x, int y, int w, int h, String imgName, int type) {
+	public GeometryObject(int x, int y, int w, int h, String imgName) {
 		super(x, y, w, h);
-		this.type = type;
 		try {
 			img = ImageIO.read(new File(imgName)).getScaledInstance(w, h, Image.SCALE_SMOOTH);
 		} catch (IOException e) {
@@ -27,7 +25,7 @@ public class GeometryObject extends Rectangle{
 		y += dY;
 	}
 	public int getType() {
-		return type;
+		return 0;
 	}
 	public void draw(Graphics g) {
 		g.drawImage(img, x, y, null);
