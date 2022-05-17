@@ -34,7 +34,6 @@ import javax.swing.KeyStroke;
 
 public class GeometryDash {
 	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = 50, PLAYERHEIGHT = 50, DIFFICULTY = 30;
-	
 	// list of obstacles
 	private ArrayList<GeometryObject> obstacles = new ArrayList<GeometryObject>();
 
@@ -45,30 +44,24 @@ public class GeometryDash {
 	private boolean lost = false, won = false, paused = true, jumping = false, spawn = true;
 	// don't forget, groundHeight is actually 472 pixels above the ground
 	public void move() {
-		System.out.println(obstacleHeight);
-		if (player.y < groundHeight - obstacleHeight && jumping == false) {
+		if (player.y < groundHeight - obstacleHeight) {
 			playerSpeed += gravity;
 			player.moveY(playerSpeed);
-			//System.out.println(player.y + " is less than " + groundHeight + " - " + obstacleHeight);
 		}
+	
 		if (player.y > groundHeight - obstacleHeight) {
 			player.y = groundHeight - obstacleHeight;
 			playerSpeed = defaultPlayerSpeed;
+			jumping = false;
 		}
 		for (int i = 0; i < obstacles.size(); i++) {
 			obstacles.get(i).moveX(backgroundSpeed);
 		}
 	}
-	
-	public void jump() {
-		if (jumping == true) {
-			player.moveY(playerSpeed);
-			playerSpeed += gravity;
-			
-		}
-	}
+
 	public void checkCollisions() {
-		int dGravity = gravity;
+		boolean hitSomething = false;
+		
 		for (int i = 0; i < obstacles.size(); i++) {
 			if (obstacles.get(i).x + PLAYERWIDTH <= 0) {
 				obstacles.remove(i);
@@ -82,13 +75,13 @@ public class GeometryDash {
 				if(player.y + player.height - playerSpeed <= obstacles.get(i).y) {
 						obstacleHeight = groundHeight + player.height - obstacles.get(i).y;
 						player.y = obstacles.get(i).y - player.height;
-						playerSpeed = defaultPlayerSpeed;
-						//System.out.println(obstacleHeight);
+						jumping = false;
+						hitSomething = true;
 				} else {
 					lost = true;
 				}
-			
 			}
+
 			
 		
 			
@@ -97,6 +90,10 @@ public class GeometryDash {
 				won = true;
 			}
 		}
+		if (!hitSomething) {
+			obstacleHeight = 0;
+		}
+		
 	}
 	public void loadPreset1() {
 		// loads obstacle preset1
@@ -193,17 +190,18 @@ public class GeometryDash {
 
 		@Override
 		public void keyPressed(KeyEvent e) {			
-			if (e.getKeyChar() == KeyEvent.VK_SPACE) {
+			if (e.getKeyChar() == KeyEvent.VK_SPACE && jumping == false) {
+				playerSpeed = defaultPlayerSpeed;
 				jumping = true;
+				obstacleHeight = 0;
+				player.moveY(playerSpeed);
+				playerSpeed += gravity;
 			}
 			
 		}
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			if (e.getKeyChar() == KeyEvent.VK_SPACE) {
-				jumping = false;
-			}
 		}
 	});
 	frame.add(canvas);
@@ -213,7 +211,6 @@ public class GeometryDash {
 	}
 	while (true) {
 		if (!paused) {
-			jump();
 			move();
 			checkCollisions();
 			frame.getContentPane().repaint();
