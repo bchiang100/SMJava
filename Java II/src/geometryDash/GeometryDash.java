@@ -18,9 +18,12 @@ import javax.swing.KeyStroke;
 // to-do
 // fix screen stretching (game has to work w/ different resolutions)
 // make a non-repeater counter for spawning in presets so there is no constant repeats - done
+// fix jumping issue (sometimes player won't jump) - need to figure out why
 
+// ideas
+// make a golden coin
 public class GeometryDash {
-	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = 50, PLAYERHEIGHT = 50, DIFFICULTY = 50;
+	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = 50, PLAYERHEIGHT = 50, GAMELENGTH = 7, DIFFICULTY = 3;
 	// list of obstacles
 	private ArrayList<GeometryObject> obstacles = new ArrayList<GeometryObject>();
 
@@ -32,7 +35,7 @@ public class GeometryDash {
 	private GeometryObject player;
 	private GeometryObject backgroundImg;
 	private double gravity = 1.5;
-	private int totalBackgroundSpeed = 0, backgroundSpeed = -10, defaultPlayerSpeed = -19 , playerSpeed = defaultPlayerSpeed, boosterSpeed = defaultPlayerSpeed * 5 / 3, timerCount = -100, groundHeight = (int)(0.674 * HEIGHT), presetWidth = 0, obstacleHeight = 0, attempt = 1, drawTimer = 0, boosterHeight = (int)(0.25 * PLAYERHEIGHT), frequency = 0;;
+	private int totalBackgroundSpeed = 0, backgroundSpeed = -10, defaultPlayerSpeed = -19 , playerSpeed = defaultPlayerSpeed, boosterSpeed = defaultPlayerSpeed * 5 / 3, timerCount = -25 * GAMELENGTH, groundHeight = (int)(0.674 * HEIGHT), presetWidth = 0, obstacleHeight = 0, attempt = 1, drawTimer = 0, boosterHeight = (int)(0.25 * PLAYERHEIGHT), frequency = 0;;
 	private boolean lost = false, won = false, paused = true, jumping = false, spacePressed = false;
 	public void move() {
 		if (player.x < (int)(WIDTH/4)) {
@@ -106,6 +109,9 @@ public class GeometryDash {
 			}
 		}
 		if (!hitSomething) {
+			if (player.y < groundHeight) {
+				jumping = true;
+			}
 			obstacleHeight = 0;
 		}
 		
@@ -144,12 +150,12 @@ public class GeometryDash {
 		create(0, 0, 0);
 		create(4, 1, 0);
 		create(7, 2, 0);
-		create(10, 2, 0);
 		create(11, 2, 0);
 		create(12, 2, 0);
 		create(13, 2, 0);
-		create(13, 3, 1);
-		create(13, 0, 1);
+		create(14, 2, 0);
+		create(14, 3, 1);
+		create(14, 0, 1);
 	}
 	
 	public void loadPreset3() {
@@ -204,28 +210,33 @@ public class GeometryDash {
 		player = new GeometryObject(4 * -PLAYERWIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/Cube.png");
 	}
 	public void spawnObstacles() {
-		while (obstacles.size() < DIFFICULTY) {
+		int temp = 0;
+		while (temp < GAMELENGTH) {
 			double random = (Math.random() * 100) + 1;
 			presetWidth += 6;
-			if (random > 1 && random < 1.5 && timerCount > 0 && frequency != 1) {
+			if (random > 1 && random < 1.5 && timerCount > 0 && frequency != 1 && DIFFICULTY >= 1) {
 				frequency = 1;
 				loadPreset1();
 				timerCount = -200;
+				temp++;
 			}
-			if (random > 1.5 && random < 2 && timerCount > 0 && frequency != 2) {
+			if (random > 1.5 && random < 2 && timerCount > 0 && frequency != 2 && DIFFICULTY >= 2) {
 				frequency = 2;
 				loadPreset2();
 				timerCount = -200;
+				temp++;
 			}
-			if (random > 2 && random < 2.5 && timerCount > 0 && frequency != 3) {
+			if (random > 2 && random < 2.5 && timerCount > 0 && frequency != 3 && DIFFICULTY >= 3) {
 				frequency = 3;
 				loadPreset3();
 				timerCount = -200;
+				temp++;
 			}
-			if (random > 2.5 && random < 3 && timerCount > 0 && frequency != 4) {
+			if (random > 2.5 && random < 3 && timerCount > 0 && frequency != 4 && DIFFICULTY >= 4) {
 				frequency = 4;
 				loadPreset4();
 				timerCount = -400;
+				temp++;
 			}
 			timerCount++;
 		}
@@ -247,20 +258,20 @@ public class GeometryDash {
 				playerSpeed = defaultPlayerSpeed;
 			}
 			jumping = true;
-			obstacleHeight = 0;
 			player.moveY(playerSpeed);
 			playerSpeed += gravity;
 		}
 	}
 	public void draw(Graphics g) {
 		backgroundImg.draw(g);
-		if (!lost && !won) {
+		if (won == false) {
 			player.draw(g);
 			for (int i = 0; i < obstacles.size(); i++) {
 				obstacles.get(i).draw(g);
 			}
 		}
-		System.out.println((progress - obstacles.get(obstacles.size()-1).x + 5 * PLAYERWIDTH));
+		System.out.println(player.y);
+		//System.out.println((progress - obstacles.get(obstacles.size()-1).x + 5 * PLAYERWIDTH));
 		g.drawRect(WIDTH/6, HEIGHT/12, 2*WIDTH/3, HEIGHT/36);
 		if (drawTimer < 100) {
 			Font f = new Font("Arial", Font.BOLD, 26);
@@ -296,7 +307,6 @@ public class GeometryDash {
 		}
 		player.y = groundHeight;
 		attempt = 1;
-		spawn = true;
 		jumping = false;
 		
 	}
