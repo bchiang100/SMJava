@@ -1,12 +1,14 @@
 package geometryDash;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -38,11 +40,14 @@ public class GeometryDash {
 	// list of obstacles
 	private ArrayList<GeometryObject> obstacles = new ArrayList<GeometryObject>();
 
+	// map of locations
+	private ArrayList<Integer> locations = new ArrayList<Integer>();
+	
 	//DONT CHANGE
 	private double progress;
 	private GeometryObject player;
 	private GeometryObject backgroundImg;
-	private int backgroundSpeed = -7, gravity = 1, defaultPlayerSpeed = -15 , playerSpeed = defaultPlayerSpeed, boosterSpeed = -25, timerCount = 150, groundHeight = 472, obstacleCount = 0, presetWidth = 0, obstacleHeight = 0;
+	private int totalBackgroundSpeed = 0, backgroundSpeed = -7, gravity = 1, defaultPlayerSpeed = -15 , playerSpeed = defaultPlayerSpeed, boosterSpeed = -25, timerCount = 150, groundHeight = 472, obstacleCount = 0, presetWidth = 0, obstacleHeight = 0, attempt = 1, drawTimer = 0;;
 	private boolean lost = false, won = false, paused = true, jumping = false, spawn = true, spacePressed = false;
 	public void move() {
 		if (player.x < (int)(WIDTH/4)) {
@@ -61,6 +66,7 @@ public class GeometryDash {
 		if (obstacles.size() > 0) {
 			for (int i = 0; i < obstacles.size(); i++) {
 				obstacles.get(i).moveX(backgroundSpeed);
+				totalBackgroundSpeed += backgroundSpeed;
 			}
 		}
 	}
@@ -69,15 +75,19 @@ public class GeometryDash {
 		boolean hitSomething = false;
 		
 		for (int i = 0; i < obstacles.size(); i++) {
-			if (obstacles.get(i).x + PLAYERWIDTH <= 0) {
-				obstacles.remove(i);
-				if (i != 0) {
-					i--;
-				}
-				continue;
-			}
+//			if (obstacles.get(i).x + PLAYERWIDTH <= 0) {
+//				obstacles.remove(i);
+//				if (i != 0) {
+//					i--;
+//				}
+//				continue;
+//			}
 			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 1) {
-				lost = true;
+				drawTimer = 0;
+				for (int j = 0; j < obstacles.size(); j++) {
+					obstacles.get(j).moveX(-totalBackgroundSpeed);
+				}
+				attempt++;
 			}
 			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 0) {
 				// I subtracted by playerSpeed since the player y value is not actually the obstacle's y value when it intersects, but rather a little below the obstacle
@@ -87,7 +97,12 @@ public class GeometryDash {
 						jumping = false;
 						hitSomething = true;
 				} else {
-					lost = true;
+					drawTimer = 0;
+					totalBackgroundSpeed /= obstacles.size();
+					for (int j = 0; j < obstacles.size(); j++) {
+						obstacles.get(j).moveX(-totalBackgroundSpeed);
+					}
+					attempt++;
 				}
 			}
 			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 2) {
@@ -169,7 +184,6 @@ public class GeometryDash {
 	public void spawnObstacles() {
 		if (obstacles.size() < DIFFICULTY) {
 			double random = (Math.random() * 100) + 1;
-			//System.out.println(random);
 			presetWidth += 6;
 			if (random > 1 && random < 1.8 && timerCount > 200) {
 				loadPreset1();
@@ -190,6 +204,10 @@ public class GeometryDash {
 			progress = obstacles.get(obstacles.size()-1).x;
 			//maybe add a wall in the ending
 			//obstacles.add(new Rectangle(obstacles.get(obstacles.size()-1).x + 200), 0, 20, HEIGHT)));
+			for (int i = 0; i < obstacles.size(); i++) {
+				locations.add(obstacles.get(i).x);
+				//System.out.println(locations.get(obstacles.get(i)));
+			}
 			paused = !paused;
 		}
 	} 
@@ -213,10 +231,14 @@ public class GeometryDash {
 				obstacles.get(i).draw(g);
 			}
 		}
-		System.out.println(progress);
 		System.out.println((progress - obstacles.get(obstacles.size()-1).x + 5 * PLAYERWIDTH));
 		g.drawRect(WIDTH/6, HEIGHT/12, 2*WIDTH/3, HEIGHT/36);
-		
+		if (drawTimer < 100) {
+			Font f = new Font("Arial", Font.BOLD, 14);
+			g.setFont(f);
+			g.drawString("Attempt " + attempt, WIDTH/2-25, HEIGHT/2);
+			drawTimer++;
+		}
 		//make sure its not empty
 		if ((progress - obstacles.get(obstacles.size()-1).x)/progress <= 2*WIDTH/3) {
 			g.fillRect(WIDTH/6, HEIGHT/12, (int)((progress - obstacles.get(obstacles.size()-1).x + 5 * PLAYERWIDTH)/progress * 2*WIDTH/3), HEIGHT/36);
@@ -233,22 +255,22 @@ public class GeometryDash {
 		}
 	}
 	public void restart() {
+		drawTimer = 0;
 		playerSpeed = defaultPlayerSpeed;
-		for (int i = 0; i < obstacles.size(); i++) {
-			obstacles.remove(i);
-			if (i != 0) {
-				i--;
-			}
+		totalBackgroundSpeed /= obstacles.size();
+		for (int j = 0; j < obstacles.size(); j++) {
+			obstacles.get(j).moveX(-totalBackgroundSpeed);
 		}
-		obstacles.remove(0);
 		won = false;
-		lost = false;
-		player.x = ((int)WIDTH/4);
+		player.x = 2 * -PLAYERWIDTH;
+		if (player.x < (int)(WIDTH/4)) {
+			player.moveX(7);
+		}
 		player.y = groundHeight;
-		
+		attempt = 1;
 		spawn = true;
 		jumping = false;
-		System.out.println(obstacles.size());
+		
 	}
 	
 	
