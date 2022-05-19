@@ -23,34 +23,34 @@ import javax.swing.KeyStroke;
 // ideas
 // make a golden coin
 public class GeometryDash {
-	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = 50, PLAYERHEIGHT = 50, GAMELENGTH = 5, DIFFICULTY = 7;
+	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = HEIGHT/14, PLAYERHEIGHT = HEIGHT / 14, GAMELENGTH = 5, DIFFICULTY = 7;
+	
 	// list of obstacles
 	private ArrayList<GeometryObject> obstacles = new ArrayList<GeometryObject>();
 
-	// map of locations
+	// map of locations of each obstacle (for restarting purposes)
 	private ArrayList<Integer> locations = new ArrayList<Integer>();
 	
 	//DONT CHANGE
-	private double progress;
 	private GeometryObject player;
 	private GeometryObject backgroundImg;
-	private double gravity = 1.5;
+	private double gravity = 1.5, progress;
 	private int totalBackgroundSpeed = 0, backgroundSpeed = -10, defaultPlayerSpeed = -19 , playerSpeed = defaultPlayerSpeed, boosterSpeed = defaultPlayerSpeed * 5 / 3, timerCount = -25 * GAMELENGTH, groundHeight = (int)(0.674 * HEIGHT), presetWidth = 0, obstacleHeight = 0, attempt = 1, drawTimer = 0, boosterHeight = (int)(0.25 * PLAYERHEIGHT), frequency = 0;;
-	private boolean lost = false, won = false, paused = true, jumping = false, spacePressed = false;
+	private boolean won = false, paused = true, jumping = false, spacePressed = false;
+	
 	public void move() {
-		if (player.x < (int)(WIDTH/4)) {
-			player.moveX(7);
-		}
+		// makes the player drop down if you are in air and not jumping/falling
 		if (player.y < groundHeight - obstacleHeight) {
 			playerSpeed += gravity;
 			player.moveY(playerSpeed);
 		}
-
+		// sets the player's height to the ground if touched
 		if (player.y > groundHeight - obstacleHeight) {
 			player.y = groundHeight - obstacleHeight;
 			playerSpeed = defaultPlayerSpeed;
 			jumping = false;
 		}
+		// moves the objects
 		if (obstacles.size() > 0) {
 			for (int i = 0; i < obstacles.size(); i++) {
 				obstacles.get(i).moveX(backgroundSpeed);
@@ -60,28 +60,23 @@ public class GeometryDash {
 	}
 
 	public void checkCollisions() {
-		
 		boolean hitSomething = false;
 		for (int i = 0; i < obstacles.size(); i++) {
+			// I did this so that the computer doesn't have to waste computing resources checking for collisions after the player has passed it
 			if (player.x > obstacles.get(i).x + obstacles.get(i).width) {
 				i++;
 			}
-			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 1) {
-				drawTimer = 0;
-				totalBackgroundSpeed /= obstacles.size();
-				for (int j = 0; j < obstacles.size(); j++) {
-					obstacles.get(j).moveX(-totalBackgroundSpeed);
-				}
-				attempt++;
-			}
+			// check if the player hits a square
 			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 0) {
 				// I subtracted by playerSpeed since the player y value is not actually the obstacle's y value when it intersects, but rather a little below the obstacle
 				if(player.y + player.height - playerSpeed <= obstacles.get(i).y) {
-						obstacleHeight = groundHeight + player.height - obstacles.get(i).y;
-						player.y = obstacles.get(i).y - player.height;
-						jumping = false;
-						hitSomething = true;
+					// sets player height to the obstacle's height	
+					obstacleHeight = groundHeight + player.height - obstacles.get(i).y;
+					player.y = obstacles.get(i).y - player.height;
+					jumping = false;
+					hitSomething = true;
 				} else {
+					// this means that the player has hit the side (not top) of the block and crashed, so restart game and increase the attempt #
 					drawTimer = 0;
 					totalBackgroundSpeed /= obstacles.size();
 					for (int j = 0; j < obstacles.size(); j++) {
@@ -90,37 +85,45 @@ public class GeometryDash {
 					attempt++;
 				}
 			}
+			// checks if the player hits a triangle (instantly lose)
+			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 1) {
+				drawTimer = 0;
+				totalBackgroundSpeed /= obstacles.size();
+				for (int j = 0; j < obstacles.size(); j++) {
+					obstacles.get(j).moveX(-totalBackgroundSpeed);
+				}
+				attempt++;
+			}
+			// turns on ability to jump if player is on ground
 			if (player.y == groundHeight) {
 				jumping = false;
 			}
+			// checks if the player has hit a booster
 			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 2) {
 				playerSpeed = boosterSpeed;
 				jump();
 			}
+			// checks if the player has hit a pink jump ring (requires space press to activate)
 			if (obstacles.get(i).intersects(player) && spacePressed && obstacles.get(i).getType() == 3) {
-			
 				playerSpeed = (int)(0.5 * defaultPlayerSpeed);
-				//System.out.println("SPEED IS " + playerSpeed);
 				jump();
-				
 			}
+			// checks if player has hit a yellow jump ring (requires space press to activate)
 			if (obstacles.get(i).intersects(player) && spacePressed && obstacles.get(i).getType() == 4) {
 				playerSpeed = (int)(0.8 * defaultPlayerSpeed);
-				//System.out.println("SPEED IS " + playerSpeed);
 				jump();
 			}
+			// checks if the player has hit a red jump ring (requires space press to activate)
 			if (obstacles.get(i).intersects(player) && spacePressed && obstacles.get(i).getType() == 5) {
 				playerSpeed = (int)(1.2 * defaultPlayerSpeed);
-				System.out.println("SPEED IS " + playerSpeed);
-				System.out.println("TYPE IS " + obstacles.get(i).getType());
 				jump();
 			}
-		
-			// temporary win condition
+			// win condition (finish obstacle course)
 			if (player.x > obstacles.get(obstacles.size() - 1).x) {
 				won = true;
 			}
 		}
+		// if this boolean didn't activate (meaning it didn't hit any obstacles) then set jumping to true meaning that you CANNOT jump during this time
 		if (!hitSomething) {
 			if (player.y < groundHeight) {
 				jumping = true;
@@ -255,12 +258,10 @@ public class GeometryDash {
 		create(11, 0, 1);
 		create(12, 0, 1);
 		create(13, 0, 1);
-		
 		create(17, 0, 1);
 		create(20.5, 1, 0);
 		create(20.5, 2, 0);
 		create(20.5, 3, 1);
-		
 		create(24, 1.5, 5);
 		create(27, 2, 0);
 		create(28, 2, 0);
@@ -275,6 +276,7 @@ public class GeometryDash {
 		create(42, 0, 1);
 	}
 	public void loadPreset6() {
+		// loads preset 6
 		create(0, 0, 2);
 		create(1, 0, 1);
 		create(2, 0, 1);
@@ -293,7 +295,6 @@ public class GeometryDash {
 		create(9, 0, 1);
 		create(9, 1, 0);
 		create(14, 0, 0);
-		//
 		create(18, 1, 0);
 		create(18, 2, 1);
 		create(21, 0, 2);
@@ -312,6 +313,7 @@ public class GeometryDash {
 		create(31, 1, 0);
 	}
 	public void loadPreset7() {
+		// loads preset 7
 		create(0, 0, 2);
 		create(2, 0, 0);
 		create(2, 1, 0);
@@ -320,14 +322,11 @@ public class GeometryDash {
 		create(5, 3, 4);
 		create(9, 4, 4);
 		create(14, 3, 4);
-		//
 		create(18, 3, 0);
 		create(19, 3, 0);
 		create(20, 3, 0);
-		//
 		create(24, 3, 4);
 		create(27, 3, 5);
-		//
 		create(29, 0, 0);
 		create(29, 1, 0);
 		create(29, 2, 0);
@@ -335,7 +334,6 @@ public class GeometryDash {
 		create(30, 1, 0);
 		create(30, 2, 0);
 		create(30, 3, 2);
-		//
 		create(35, 5, 4);
 		create(35, 0, 1);
 		create(37, 6, 0);
@@ -343,11 +341,13 @@ public class GeometryDash {
 ;	}
 	
 	public void setup() {
+		// drawing the background image and the player
 		backgroundImg = new GeometryObject(0, 0, WIDTH, HEIGHT, "Images/GeometryDashBackground.jpeg");
-		player = new GeometryObject(4 * -PLAYERWIDTH, groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/Cube.png");
+		player = new GeometryObject((int)(WIDTH/4), groundHeight, PLAYERWIDTH, PLAYERHEIGHT, "Images/Cube.png");
 	}
 	public void spawnObstacles() {
 		int temp = 0;
+		// randomly generates an obstacle course that has GAMELENGTH mini obstacle courses
 		while (temp < GAMELENGTH) {
 			double random = (Math.random() * 100) + 1;
 			presetWidth += 6;
@@ -427,21 +427,16 @@ public class GeometryDash {
 			timerCount++;
 
 		}
-		
 			progress = obstacles.get(obstacles.size()-1).x;
-			//maybe add a wall in the ending
-			//obstacles.add(new Rectangle(obstacles.get(obstacles.size()-1).x + 200), 0, 20, HEIGHT)));
 			for (int i = 0; i < obstacles.size(); i++) {
 				locations.add(obstacles.get(i).x);
-				//System.out.println(locations.get(obstacles.get(i)));
 			}
 			paused = !paused;
-		
 	} 
 	
 	public void jump() {
+		// if jumping is false then that means you can jump
 		if (jumping == false) {
-			
 			if (playerSpeed != boosterSpeed) {
 				
 				playerSpeed = defaultPlayerSpeed;
@@ -451,7 +446,9 @@ public class GeometryDash {
 			playerSpeed += gravity;
 		}
 	}
+	
 	public void draw(Graphics g) {
+		// draws background and the constantly moving obstacles
 		backgroundImg.draw(g);
 		if (won == false) {
 			player.draw(g);
@@ -460,7 +457,6 @@ public class GeometryDash {
 			}
 		}
 		
-		//System.out.println((progress - obstacles.get(obstacles.size()-1).x + 5 * PLAYERWIDTH));
 		g.drawRect(WIDTH/6, HEIGHT/12, 2*WIDTH/3, HEIGHT/36);
 		if (drawTimer < 100) {
 			Font f = new Font("Arial", Font.BOLD, 26);
@@ -468,13 +464,9 @@ public class GeometryDash {
 			g.drawString("Attempt " + attempt, WIDTH/2-25, HEIGHT/3);
 			drawTimer++;
 		}
-		//make sure its not empty
+		// draws out the progress bar
 		if ((progress - obstacles.get(obstacles.size()-1).x)/progress <= 2*WIDTH/3) {
 			g.fillRect(WIDTH/6, HEIGHT/12, (int)((progress - obstacles.get(obstacles.size()-1).x + 5 * PLAYERWIDTH)/progress * 2*WIDTH/3), HEIGHT/36);
-		}
-		if (lost) {
-			g.setColor(Color.white);
-			g.drawString("You lose", WIDTH/2-25, HEIGHT/2);
 		}
 		// prints "you win" if you win
 		if (won) {
@@ -483,6 +475,7 @@ public class GeometryDash {
 		}
 	}
 	public void restart() {
+		// restarts the game (restarts the attempt number and keeps the same randomly generated course)
 		drawTimer = 0;
 		playerSpeed = defaultPlayerSpeed;
 		totalBackgroundSpeed /= obstacles.size();
@@ -541,7 +534,7 @@ public class GeometryDash {
 	frame.setVisible(true);
 		spawnObstacles();
 	
-	while (!lost && !won) {
+	while (!won) {
 		if (!paused) {
 			if (spacePressed) {
 				jump();
