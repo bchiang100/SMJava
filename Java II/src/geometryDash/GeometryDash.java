@@ -23,7 +23,7 @@ import javax.swing.KeyStroke;
 // ideas
 // make a golden coin
 public class GeometryDash {
-	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = 50, PLAYERHEIGHT = 50, GAMELENGTH = 7, DIFFICULTY = 3;
+	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = 50, PLAYERHEIGHT = 50, GAMELENGTH = 7, DIFFICULTY = 5;
 	// list of obstacles
 	private ArrayList<GeometryObject> obstacles = new ArrayList<GeometryObject>();
 
@@ -60,16 +60,12 @@ public class GeometryDash {
 	}
 
 	public void checkCollisions() {
+		System.out.println(playerSpeed);
 		boolean hitSomething = false;
-		
 		for (int i = 0; i < obstacles.size(); i++) {
-//			if (obstacles.get(i).x + PLAYERWIDTH <= 0) {
-//				obstacles.remove(i);
-//				if (i != 0) {
-//					i--;
-//				}
-//				continue;
-//			}
+			if (player.x > obstacles.get(i).x + obstacles.get(i).width) {
+				i++;
+			}
 			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 1) {
 				drawTimer = 0;
 				totalBackgroundSpeed /= obstacles.size();
@@ -93,6 +89,9 @@ public class GeometryDash {
 					}
 					attempt++;
 				}
+			}
+			if (player.y == groundHeight) {
+				jumping = false;
 			}
 			if (obstacles.get(i).intersects(player) && obstacles.get(i).getType() == 2) {
 				playerSpeed = boosterSpeed;
@@ -203,6 +202,18 @@ public class GeometryDash {
 	}
 	public void loadPreset5() {
 		// loads preset 5
+		create(0, 0, 1);
+		create(1, 0, 1);
+		create(1, 1, 3);
+		create(2, 0, 1);
+		create(3, 0, 1);
+		create(4, 0, 1);
+		create(5, 0, 0);
+		create(8, 0, 0);
+		create(8, 1, 0);
+		create(10, 2, 3);
+		create(12, 1, 0);
+		create(13, 1, 0);
 	}
 	
 	public void setup() {
@@ -238,6 +249,12 @@ public class GeometryDash {
 				timerCount = -400;
 				temp++;
 			}
+			if (random > 3 && random < 4 && timerCount > 0 && frequency != 4 && DIFFICULTY >= 5) {
+				frequency = 5;
+				loadPreset5();
+				timerCount = -500;
+				temp++;
+			}
 			timerCount++;
 		}
 		
@@ -254,7 +271,9 @@ public class GeometryDash {
 	
 	public void jump() {
 		if (jumping == false) {
+			System.out.println("ACTIVATES");
 			if (playerSpeed != boosterSpeed) {
+				System.out.println("AGAIN");
 				playerSpeed = defaultPlayerSpeed;
 			}
 			jumping = true;
@@ -350,7 +369,6 @@ public class GeometryDash {
 	});
 	frame.add(canvas);
 	frame.setVisible(true);
-	
 		spawnObstacles();
 	
 	while (!lost && !won) {
