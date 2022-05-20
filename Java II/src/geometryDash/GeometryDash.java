@@ -15,13 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-// to-do
-// fix screen stretching (game has to work w/ different resolutions)
-// make a non-repeater counter for spawning in presets so there is no constant repeats - done
-// fix jumping issue (sometimes player won't jump) - need to figure out why
-
-// ideas
-// make a golden coin
 public class GeometryDash {
 	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = HEIGHT/14, PLAYERHEIGHT = HEIGHT / 14, GAMELENGTH = 5, DIFFICULTY = 7;
 	
