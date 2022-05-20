@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 public class GeometryDash {
-	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = HEIGHT/14, PLAYERHEIGHT = HEIGHT / 14, GAMELENGTH = 5, DIFFICULTY = 7;
+	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = HEIGHT/14, PLAYERHEIGHT = HEIGHT / 14, GAMELENGTH = 7, DIFFICULTY = 7;
 	
 	// list of obstacles
 	private ArrayList<GeometryObject> obstacles = new ArrayList<GeometryObject>();
@@ -476,10 +476,8 @@ public class GeometryDash {
 			obstacles.get(j).moveX(-totalBackgroundSpeed);
 		}
 		won = false;
-		player.x = 2 * -PLAYERWIDTH;
-		if (player.x < (int)(WIDTH/4)) {
-			player.moveX(7);
-		}
+		player.x = (int)(WIDTH/4);
+		
 		player.y = groundHeight;
 		attempt = 1;
 		jumping = false;
@@ -525,6 +523,7 @@ public class GeometryDash {
 	});
 	frame.add(canvas);
 	frame.setVisible(true);
+
 		spawnObstacles();
 	
 	while (!won) {
