@@ -203,7 +203,6 @@ public class GeometryDash {
 		create(28, 0, 1);
 		create(29, 0, 1);
 		create(30, 0, 1);
-		
 	}
 	public void loadPreset4() {
 		// loads preset 4
@@ -236,40 +235,6 @@ public class GeometryDash {
 	}
 	public void loadPreset5() {
 		// loads preset 5
-		create(0, 3.5, 0);
-		create(1, 3.5, 0);
-		create(2, 3.5, 0);
-		create(3, 3.5, 0);
-		create(4, 3.5, 0);
-		create(5, 3.5, 0);
-		create(6, 3.5, 0);
-		create(1, 0, 2);
-		create(5, 0, 2);
-		create(11, 1, 3);
-		create(9, 0, 1);
-		create(10, 0, 1);
-		create(11, 0, 1);
-		create(12, 0, 1);
-		create(13, 0, 1);
-		create(17, 0, 1);
-		create(20.5, 1, 0);
-		create(20.5, 2, 0);
-		create(20.5, 3, 1);
-		create(24, 1.5, 5);
-		create(27, 2, 0);
-		create(28, 2, 0);
-		create(29, 2, 0);
-		create(31, 2.5, 0);
-		create(31, 3.5, 1);
-		create(33, 1.5, 0);
-		create(35, 1, 0);
-		create(37, 0, 0);
-		create(41, 1, 0);
-		create(41, 0, 0);
-		create(42, 0, 1);
-	}
-	public void loadPreset6() {
-		// loads preset 6
 		create(0, 0, 2);
 		create(1, 0, 1);
 		create(2, 0, 1);
@@ -304,6 +269,44 @@ public class GeometryDash {
 		create(30, 0, 1);
 		create(31, 0, 0);
 		create(31, 1, 0);
+		create(32, 0, 1);
+		create(32, 1, 4);
+		create(38, 0, 1);
+		
+	}
+	public void loadPreset6() {
+		// loads preset 6
+		create(0, 3.5, 0);
+		create(1, 3.5, 0);
+		create(2, 3.5, 0);
+		create(3, 3.5, 0);
+		create(4, 3.5, 0);
+		create(5, 3.5, 0);
+		create(6, 3.5, 0);
+		create(1, 0, 2);
+		create(5, 0, 2);
+		create(11, 1, 3);
+		create(9, 0, 1);
+		create(10, 0, 1);
+		create(11, 0, 1);
+		create(12, 0, 1);
+		create(13, 0, 1);
+		create(17, 0, 1);
+		create(20.5, 1, 0);
+		create(20.5, 2, 0);
+		create(20.5, 3, 1);
+		create(24, 1.5, 5);
+		create(27, 2, 0);
+		create(28, 2, 0);
+		create(29, 2, 0);
+		create(31, 2.5, 0);
+		create(31, 3.5, 1);
+		create(33, 1.5, 0);
+		create(35, 1, 0);
+		create(37, 0, 0);
+		create(41, 1, 0);
+		create(41, 0, 0);
+		create(42, 0, 1);
 	}
 	public void loadPreset7() {
 		// loads preset 7
