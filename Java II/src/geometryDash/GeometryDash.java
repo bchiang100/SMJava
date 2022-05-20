@@ -334,6 +334,13 @@ public class GeometryDash {
 		create(35, 0, 1);
 		create(37, 6, 0);
 		create(37, 7, 1);
+		create(39, 0, 2);
+		create(40, 0, 1);
+		create(41, 0, 1);
+		create(41, 1, 3);
+		create(42, 0, 1);
+		create(42, 4, 0);
+		create(42, 5, 1);
 ;	}
 	
 	public void setup() {
