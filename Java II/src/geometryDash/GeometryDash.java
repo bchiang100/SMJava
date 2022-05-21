@@ -15,8 +15,18 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+// HOW TO PLAY GEOMETRY DASH
+
+// Controls: space is to jump, r is to restart game, p is to pause
+// Goal: Jump over all the obstacles. You can land on the square block. If you land on a triangle block you die. The booster (orange rectangle) boosts you up if you touch it. 
+// If you press space on the jump rings it will also boost you up. The different colors of the rings signify the power of the jump.
+
+// You can change the GAMELENGTH (number of presets will be generated in a course) and DIFFICULTY (The hardest preset that will be spawned)
+// A preset is basically a mini obstacle course that will be randomly generated GAMELENGTH times with DIFFICULTY being the hardest preset that will be spawned
+
+// If you manage to beat all the obstacle courses (if progress bar goes to 100%) then you win!
 public class GeometryDash {
-	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = HEIGHT/14, PLAYERHEIGHT = HEIGHT / 14, GAMELENGTH = 7, DIFFICULTY = 7;
+	private int WIDTH = 1000, HEIGHT = 700, PLAYERWIDTH = HEIGHT/14, PLAYERHEIGHT = HEIGHT / 14, GAMELENGTH = 5, DIFFICULTY = 7;
 	
 	// list of obstacles
 	private ArrayList<GeometryObject> obstacles = new ArrayList<GeometryObject>();
@@ -28,7 +38,7 @@ public class GeometryDash {
 	private GeometryObject player;
 	private GeometryObject backgroundImg;
 	private double gravity = 1.5, progress;
-	private int totalBackgroundSpeed = 0, backgroundSpeed = -10, defaultPlayerSpeed = -19 , playerSpeed = defaultPlayerSpeed, boosterSpeed = defaultPlayerSpeed * 5 / 3, timerCount = -30 * GAMELENGTH, groundHeight = (int)(0.674 * HEIGHT), presetWidth = 0, obstacleHeight = 0, attempt = 1, drawTimer = 0, boosterHeight = (int)(0.25 * PLAYERHEIGHT), frequency = 0;;
+	private int totalBackgroundSpeed = 0, backgroundSpeed = -10, defaultPlayerSpeed = -19 , playerSpeed = defaultPlayerSpeed, boosterSpeed = defaultPlayerSpeed * 5 / 3, timerCount = -30 * GAMELENGTH, groundHeight = (int)(0.674 * HEIGHT), presetWidth = 0, obstacleHeight = 0, attempt = 1, drawTimer = 0, boosterHeight = (int)(0.25 * PLAYERHEIGHT), frequency = 0;
 	private boolean won = false, paused = true, jumping = false, spacePressed = false;
 	
 	public void move() {
@@ -397,38 +407,37 @@ public class GeometryDash {
 				timerCount = -200;
 				temp++;
 			}
-			if (random > 2 && random < 2.8 && timerCount > 0 && frequency != 3 && DIFFICULTY >= 3) {
+			if (random > 2 && random < 2.9 && timerCount > 0 && frequency != 3 && DIFFICULTY >= 3) {
 				frequency = 3;
 				loadPreset3();
 				timerCount = -400;
 				temp++;
 			}
-			if (random > 2.8 && random < 3.6 && timerCount > 0 && frequency != 4 && DIFFICULTY >= 4) {
+			if (random > 2.9 && random < 3.8 && timerCount > 0 && frequency != 4 && DIFFICULTY >= 4) {
 				frequency = 4;
 				loadPreset4();
 				timerCount = -400;
 				temp++;
 			}
-			if (random > 3.6 && random < 4.5 && timerCount > 0 && frequency != 5 && DIFFICULTY >= 5) {
+			if (random > 3.8 && random < 4.7 && timerCount > 0 && frequency != 5 && DIFFICULTY >= 5) {
 				frequency = 5;
 				loadPreset5();
 				timerCount = -400;
 				temp++;
 			}
-			if (random > 4.5 && random < 5.5 && timerCount > 0 && frequency != 6 && DIFFICULTY >= 6) {
+			if (random > 4.7 && random < 5.5 && timerCount > 0 && frequency != 6 && DIFFICULTY >= 6) {
 				frequency = 6;
 				loadPreset6();
 				timerCount = -500;
 				temp++;
 			}
-			if (random > 5.5 && random < 6.7 && timerCount > 0 && frequency != 7 && DIFFICULTY >= 7) {
+			if (random > 5.5 && random < 6 && timerCount > 0 && frequency != 7 && DIFFICULTY >= 7) {
 				frequency = 7;
 				loadPreset7();
 				timerCount = -500;
 				temp++;
 			}
 			timerCount++;
-
 		}
 			progress = obstacles.get(obstacles.size()-1).x;
 			for (int i = 0; i < obstacles.size(); i++) {
