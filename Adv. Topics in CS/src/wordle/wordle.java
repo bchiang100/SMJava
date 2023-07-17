@@ -126,7 +126,6 @@ public class wordle{
 					if (entered) {
 						//checks to see if the answer is correct or not and checks each individual character
 						checkAnswer();
-						
 						entered = false;
 						go = true;
 						countx++;
@@ -135,7 +134,6 @@ public class wordle{
 				} else {
 					g.drawString("You guess is not a word", 300, 450);
 				}
-				
 			}
 		for (int i = 0; i < secretAnswer.length; i++) {
 			// updates the letter bank (# means not present, @ means present but not correct place, $ means correct)
@@ -151,7 +149,6 @@ public class wordle{
 		}
 		
 		if (pressed && go) {
-			
 			characters[countx][county] = inputLetter;
 			county++;
 			if (county >= blocks[0].length) {
@@ -162,7 +159,6 @@ public class wordle{
 		for (int i = 0; i < blocks.length; i++) {
 			for (int j = 0; j < blocks[i].length; j++) {
 			g.setColor(Color.black);
-			
 			g.drawString(String.valueOf(characters[i][j].toUpperCase(characters[i][j])), blocks[i][j].getX() + 20, blocks[i][j].getY() + 30);
 			}
 		}
@@ -185,8 +181,6 @@ public class wordle{
 			}
 		}
 		return -1;
-		
-		
 	}
 	
 	
@@ -231,14 +225,14 @@ public class wordle{
 	
 	public wordle() throws IOException {
 		// generates the word list from the valid wordle words file
-		BufferedReader in = new BufferedReader(new FileReader("valid-wordle-words.txt"));
+		BufferedReader in = new BufferedReader(new FileReader("Images/valid-wordle-words.txt"));
 		
 		for (String line = in.readLine(); line != null; line = in.readLine()) {
 			dictionary.add(line.trim());
 		}
 		in.close();
 		// generates a word list from the wordle solutions file
-		BufferedReader in2 = new BufferedReader(new FileReader("wordle-solutionsNYT.txt"));
+		BufferedReader in2 = new BufferedReader(new FileReader("Images/wordle-solutionsNYT.txt"));
 		for (String line = in2.readLine(); line != null; line = in2.readLine()) {
 			wordleValidAnswers.add(line.trim());
 		}
@@ -269,7 +263,6 @@ public class wordle{
 					g.drawString("Good try... The correct answer was " + wordleValidAnswers.get(random), 300, 430);
 					go = false;
 					entered = false;
-					
 				}
 
 			}
@@ -287,7 +280,6 @@ public class wordle{
 				if (go && keyCode >= 97 && keyCode <= 122) {
 					pressed=true;
 					inputLetter = keyCode;
-					
 				}
 			}
 	
@@ -318,7 +310,6 @@ public class wordle{
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-			
 			}
 		});
 		
@@ -330,8 +321,6 @@ public class wordle{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		while (true) {
-			
-			
 			frame.repaint();
 			try {
 				Thread.sleep(60);
