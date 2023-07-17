@@ -17,10 +17,6 @@ public class April8Classwork {
 	public static void main(String [] args) {
 		April8Classwork runner = new April8Classwork();
 		runner.relMax(new double[] {2, 3, 4, 5});
-<<<<<<< HEAD
-		//testing
-=======
->>>>>>> branch 'master' of https://github.com/bchiang100/SMJava
 	}
 }
 
